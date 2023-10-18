@@ -2,6 +2,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.awt.*;
 
+@SuppressWarnings("unused")
 public class Config {
     // Associations
     private final Utils utils;
@@ -15,10 +16,10 @@ public class Config {
     private final int height;
     private final Dimension dimension;
     private final int fieldSize;
-    private final boolean isResizable;
     private final int tries;
+    private final boolean isResizable;
 
-    // Language
+    // Messages
     private final String invalidMove;
     private final String invalidObstacle;
     private final String catWon;
@@ -29,6 +30,7 @@ public class Config {
         utils = new Utils();
         this.args = args;
 
+        // Read config
         JsonNode config = utils.readJson("default");
 
         // Constants
@@ -36,10 +38,10 @@ public class Config {
         width = config.get("width").asInt();
         height = config.get("height").asInt();
         fieldSize = config.get("fieldSize").asInt();
-        isResizable = config.get("isResizable").asBoolean();
         tries = config.get("tries").asInt();
+        isResizable = config.get("isResizable").asBoolean();
 
-        // Language
+        // Messages
         invalidMove = config.get("invalidMove").asText();
         invalidObstacle = config.get("invalidObstacle").asText();
         catWon = config.get("catWon").asText();
@@ -49,7 +51,6 @@ public class Config {
     }
 
     // Setter
-
     public void setController(Controller controller) {
         this.controller = controller;
     }
@@ -98,16 +99,16 @@ public class Config {
         return fieldSize;
     }
 
-    public boolean isResizable() {
-        return isResizable;
-    }
-
     public int getTries() {
         return tries;
     }
 
-    // Getter Language
+    public boolean isResizable() {
+        return isResizable;
+    }
 
+
+    // Getter Messages
     public String getCatcherWon() {
         return catcherWon;
     }

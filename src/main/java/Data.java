@@ -11,13 +11,14 @@ public class Data {
     public Data(Config config) {
         config.setData(this);
 
+        // Initialize variables
         isCatOnMove = true;
         catPosition = new Cat(config);
         obstacles = new Point[config.getTries()];
     }
 
     // Getter
-    public Point getCatPosition() {
+    public Point getCat() {
         return catPosition;
     }
 
@@ -30,10 +31,10 @@ public class Data {
     }
 
     // Setter
-    public void setCatPosition(Point catPosition) {
+    public void setCat(Point catPosition) {
         if (this.catPosition == catPosition) return;
         this.catPosition.setLocation(catPosition);
-        isCatOnMove = !isCatOnMove;
+        isCatOnMove = !isCatOnMove; // Switch turns
     }
 
     public void setObstacle(Point obstacle) {
@@ -43,6 +44,6 @@ public class Data {
                 break;
             }
         }
-        isCatOnMove = !isCatOnMove;
+        isCatOnMove = !isCatOnMove; // Switch turns
     }
 }
