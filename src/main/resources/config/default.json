@@ -1,0 +1,8 @@
+{
+  "title": "Catch the Cat",
+  "width": 800,
+  "height": 600,
+  "fieldSize": 8,
+  "isResizable": false,
+  "tries": 12
+}
