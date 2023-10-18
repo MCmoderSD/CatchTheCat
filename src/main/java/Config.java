@@ -6,9 +6,7 @@ public class Config {
     // Associations
     private final Utils utils;
     private Controller controller;
-    private UI ui;
     private Data data;
-    private Cat cat;
 
     // Constants
     private final String[] args;
@@ -20,6 +18,12 @@ public class Config {
     private final boolean isResizable;
     private final int tries;
 
+    // Language
+    private final String invalidMove;
+    private final String invalidObstacle;
+    private final String catWon;
+    private final String catcherWon;
+
     // Constructor
     public Config(String[] args) {
         utils = new Utils();
@@ -27,12 +31,19 @@ public class Config {
 
         JsonNode config = utils.readJson("default");
 
+        // Constants
         title = config.get("title").asText();
         width = config.get("width").asInt();
         height = config.get("height").asInt();
         fieldSize = config.get("fieldSize").asInt();
         isResizable = config.get("isResizable").asBoolean();
         tries = config.get("tries").asInt();
+
+        // Language
+        invalidMove = config.get("invalidMove").asText();
+        invalidObstacle = config.get("invalidObstacle").asText();
+        catWon = config.get("catWon").asText();
+        catcherWon = config.get("catcherWon").asText();
 
         dimension = new Dimension(width, height);
     }
@@ -43,16 +54,8 @@ public class Config {
         this.controller = controller;
     }
 
-    public void setUI(UI ui) {
-        this.ui = ui;
-    }
-
     public void setData(Data data) {
         this.data = data;
-    }
-
-    public void setCat(Cat cat) {
-        this.cat = cat;
     }
 
 
@@ -65,16 +68,8 @@ public class Config {
         return controller;
     }
 
-    public UI getUi() {
-        return ui;
-    }
-
     public Data getData() {
         return data;
-    }
-
-    public Cat getCat() {
-        return cat;
     }
 
 
@@ -109,5 +104,23 @@ public class Config {
 
     public int getTries() {
         return tries;
+    }
+
+    // Getter Language
+
+    public String getCatcherWon() {
+        return catcherWon;
+    }
+
+    public String getCatWon() {
+        return catWon;
+    }
+
+    public String getInvalidMove() {
+        return invalidMove;
+    }
+
+    public String getInvalidObstacle() {
+        return invalidObstacle;
     }
 }

@@ -4,5 +4,9 @@
   "height": 600,
   "fieldSize": 8,
   "isResizable": false,
-  "tries": 12
+  "tries": 12,
+  "invalidMove": "Invalid move!",
+  "invalidObstacle": "Invalid Placement!",
+  "catWon": "Cat won!",
+  "catcherWon": "Catcher won!"
 }

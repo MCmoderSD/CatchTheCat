@@ -1,21 +1,18 @@
 import java.awt.*;
 
 public class Data {
-    // Associations
-    private final Config config;
 
     // Variables
     private final Point[] obstacles;
-    private Point catPosition;
+    private final Cat catPosition;
     private boolean isCatOnMove;
 
     // Constructor
     public Data(Config config) {
         config.setData(this);
-        this.config = config;
 
         isCatOnMove = true;
-        catPosition = new Point(config.getFieldSize() / 2, config.getFieldSize() / 2);
+        catPosition = new Cat(config);
         obstacles = new Point[config.getTries()];
     }
 
@@ -28,12 +25,24 @@ public class Data {
         return obstacles;
     }
 
-    // Setter
-    public void setCatPosition(Point catPosition) {
-        this.catPosition = catPosition;
+    public boolean isCatOnMove() {
+        return isCatOnMove;
     }
 
-    public void setObstacle(Point obstacle, int index) {
-        obstacles[index] = obstacle;
+    // Setter
+    public void setCatPosition(Point catPosition) {
+        if (this.catPosition == catPosition) return;
+        this.catPosition.setLocation(catPosition);
+        isCatOnMove = !isCatOnMove;
+    }
+
+    public void setObstacle(Point obstacle) {
+        for (int i = 0; i < obstacles.length; i++) {
+            if (obstacles[i] == null) {
+                obstacles[i] = obstacle;
+                break;
+            }
+        }
+        isCatOnMove = !isCatOnMove;
     }
 }
