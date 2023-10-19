@@ -1,0 +1,16 @@
+{
+  "title": "Prendi il gatto",
+  "invalidMove": "Mossa invalida!",
+  "invalidObstacle": "Posizionamento invalido!",
+  "catWon": "Gatto ha vinto!",
+  "catcherWon": "Catturatore ha vinto!",
+  "catIsNotOnMove": "Non è il turno del gatto!",
+  "catcherIsNotOnMove": "Non è il turno del catturatore!",
+  "triesLeft": "Tentativi rimasti: ",
+  "catIsOnMove": "Il turno del gatto!",
+  "catcherIsOnMove": "Il turno del catturatore!",
+  "up": "Su",
+  "down": "Giù",
+  "left": "Sinistra",
+  "right": "Destra"
+}

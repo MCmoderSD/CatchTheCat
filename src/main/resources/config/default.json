@@ -1,12 +1,11 @@
 {
-  "title": "Catch the Cat",
   "width": 800,
   "height": 600,
   "fieldSize": 8,
   "isResizable": false,
   "tries": 12,
-  "invalidMove": "Invalid move!",
-  "invalidObstacle": "Invalid Placement!",
-  "catWon": "Cat won!",
-  "catcherWon": "Catcher won!"
+  "arrowUp": "Images/up.png",
+  "arrowLeft": "Images/left.png",
+  "arrowDown": "Images/down.png",
+  "arrowRight": "Images/right.png"
 }

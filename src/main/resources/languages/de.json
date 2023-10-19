@@ -1,0 +1,16 @@
+{
+  "title": "Fang die Katze",
+  "invalidMove": "Ungültiger Zug!",
+  "invalidObstacle": "Ungültiges Hindernis!",
+  "catWon": "Die Katze hat gewonnen!",
+  "catcherWon": "Der Fänger hat gewonnen!",
+  "catIsNotOnMove": "Die Katze ist nicht am Zug!",
+  "catcherIsNotOnMove": "Der Fänger ist nicht am Zug!",
+  "triesLeft": "Versuche übrig: ",
+  "catIsOnMove": "Die Katze ist jetzt am Zug!",
+  "catcherIsOnMove": "Der Fänger ist jetzt am Zug!",
+  "up": "Hoch",
+  "down": "Runter",
+  "left": "Links",
+  "right": "Rechts"
+}

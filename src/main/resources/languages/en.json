@@ -1,0 +1,16 @@
+{
+  "title": "Catch the Cat",
+  "invalidMove": "Invalid move!",
+  "invalidObstacle": "Invalid Placement!",
+  "catWon": "Cat won!",
+  "catcherWon": "Catcher won!",
+  "catIsNotOnMove": "Cat is not on move!",
+  "catcherIsNotOnMove": "Catcher is not on move!",
+  "triesLeft": "Tries left: ",
+  "catIsOnMove": "Cat is now on move!",
+  "catcherIsOnMove": "Catcher is now on move!",
+  "up": "up",
+  "down": "down",
+  "left": "left",
+  "right": "right"
+}

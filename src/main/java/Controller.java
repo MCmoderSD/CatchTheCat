@@ -20,10 +20,18 @@ public class Controller {
 
     // Methods
 
+    // Calculate tries
+    private int calculateTries() {
+        int tries = 0;
+        for (Point obstacle : data.getObstacles()) if (obstacle == null) ++tries;
+        return tries;
+    }
+
     // Check if move is valid
     private boolean isMoveValid(Point point) {
         if (point.equals(data.getCat())) return false; // Cat can't move to its own position
         for (Point obstacle : data.getObstacles()) if (point.equals(obstacle)) return false; // Cat can't move to an obstacle
+        if (point.x < 0 || point.x >= config.getFieldSize() || point.y < 0 || point.y >= config.getFieldSize()) return false; // Cat can't move outside the field
 
         // Cat can't move diagonally or more than one tile
         int deltaX = (int) (point.getX() - data.getCat().getX());
@@ -35,15 +43,10 @@ public class Controller {
     // Check if obstacle placement is valid
     private boolean isObstacleValid(Point point) {
         if (point.equals(data.getCat())) return false; // Obstacle can't be placed on cat's position
+        for (Point obstacle : data.getObstacles()) if (point.equals(obstacle)) return false; // Obstacle can't be placed on another obstacle
 
         // Check if an obstacle is already placed and if there are any tries left
-        int tries = config.getTries();
-        for (Point obstacle : data.getObstacles()) {
-            if (point.equals(obstacle)) return false;
-            if (obstacle != null) --tries;
-        }
-
-        return tries > 0;
+        return calculateTries() > 0;
     }
 
     // Check if somebody won
@@ -68,59 +71,85 @@ public class Controller {
 
     // Winner
     private void winner(boolean isCat) {
-        if (isCat) ui.showMessage(config.getCatWon()); // Cat won
-        else ui.showMessage(config.getCatcherWon()); // Catcher won
-        System.exit(0); // Exit the game
+        if (isCat) { // Cat won
+            ui.appendLog(config.getCatWon());
+            ui.showMessage(config.getCatWon());
+        }
+        else { // Catcher won
+            ui.appendLog(config.getCatcherWon());
+            ui.showMessage(config.getCatcherWon());
+        }
     }
 
     // Public Methods
 
     // Convert Key to Point and call catPlaysMove(Point)
     public void catPlaysMove(int key) {
+        if (!data.isCatOnMove()) ui.showMessage(config.getCatIsNotOnMove()); // Cat is not on the move
+        else {
+            // Get cat's position
+            int x = data.getCat().x;
+            int y = data.getCat().y;
 
-        // Get cat's position
-        int x = data.getCat().x;
-        int y = data.getCat().y;
+            // Convert key into an x or y direction
+            switch (key) {
+                case KeyEvent.VK_W:
+                case KeyEvent.VK_UP:
+                case 0:
+                    --y;
+                    break;
+                case KeyEvent.VK_A:
+                case KeyEvent.VK_LEFT:
+                case 1:
+                    --x;
+                    break;
+                case KeyEvent.VK_S:
+                case KeyEvent.VK_DOWN:
+                case 2:
 
-        // Convert key into an x or y direction
-        switch (key) {
-            case KeyEvent.VK_W:
-            case KeyEvent.VK_UP:
-                --y; break;
-            case KeyEvent.VK_A:
-            case KeyEvent.VK_LEFT:
-                --x; break;
-            case KeyEvent.VK_S:
-            case KeyEvent.VK_DOWN:
-                ++y; break;
-            case KeyEvent.VK_D:
-            case KeyEvent.VK_RIGHT:
-                ++x; break;
+                    ++y;
+                    break;
+                case KeyEvent.VK_D:
+                case KeyEvent.VK_RIGHT:
+                case 3:
+                    ++x;
+                    break;
+            }
+
+            // Calls catPlaysMove(Point) with the calculated point
+            catPlaysMove(new Point(x, y));
         }
-
-        // Calls catPlaysMove(Point) with the calculated point
-        catPlaysMove(new Point(x, y));
     }
 
     // Cat Movement
     public void catPlaysMove(Point point) {
-        // Check if move is valid
-        if (!isMoveValid(point)) ui.showMessage(config.getInvalidMove()); // Invalid move
+        if (!data.isCatOnMove()) ui.showMessage(config.getCatIsNotOnMove()); // Cat is not on the move
         else {
-            ui.setButton(point, data.getCat()); // Update UI
-            data.setCat(point); // Update data
+            // Check if move is valid
+            if (!isMoveValid(point)) ui.showMessage(config.getInvalidMove()); // Invalid move
+            else {
+                ui.appendLog(config.getCatcherIsOnMove());
+                ui.setButton(point, data.getCat()); // Update UI
+                data.setCat(point); // Update data
+            }
+            checkForWinner(); // Check if somebody won
         }
-        checkForWinner(); // Check if somebody won
     }
 
     // Obstacle Placement
     public void placeObstacle(Point point) {
+        if (data.isCatOnMove()) catPlaysMove(point);
+        else {
         // Check if obstacle placement is valid
         if (!isObstacleValid(point)) ui.showMessage(config.getInvalidObstacle()); // Invalid obstacle
         else {
             ui.setButton(point); // Update UI
+            ui.appendLog(config.getCatIsOnMove());
             data.setObstacle(point); // Update data
         }
+
         checkForWinner(); // Check if somebody won
+        ui.updateTries(calculateTries()); // Update tries
+        }
     }
 }

@@ -30,3 +30,15 @@ Player 2 is plays as the catcher and can place barricades to trap and catch the 
 - You need to have Java 8 installed on your computer.
 - Run the .jar file with Java 8.
 - Have fun!
+
+## Language
+The game is currently only available in English, German and Italian. <Br>
+The default is English, but you can change it with start arguments. <Br>
+`java -jar CatchTheCat.jar de` for German <Br>
+`java -jar CatchTheCat.jar en` for English <Br>
+`java -jar CatchTheCat.jar it` for Italian <Br>
+
+If you wan't to contribute and translate the game into your language, please make a pull request. <Br>
+
+## Contributors
+- [RedsmileTV](https://github.com/Redsmiletv) (Italian translation)

@@ -1,5 +1,6 @@
 import com.fasterxml.jackson.databind.JsonNode;
 
+import javax.swing.*;
 import java.awt.*;
 
 @SuppressWarnings("unused")
@@ -18,34 +19,65 @@ public class Config {
     private final int fieldSize;
     private final int tries;
     private final boolean isResizable;
+    private final Image[] arrows;
 
     // Messages
     private final String invalidMove;
     private final String invalidObstacle;
     private final String catWon;
     private final String catcherWon;
+    private final String catIsNotOnMove;
+    private final String catcherIsNotOnMove;
+    private final String triesLeft;
+    private final String catIsOnMove;
+    private final String catcherIsOnMove;
+    private final String[] directions;
 
     // Constructor
     public Config(String[] args) {
         utils = new Utils();
         this.args = args;
 
+        String language = "en";
+        if (args.length != 0) language = args[0];
+
         // Read config
-        JsonNode config = utils.readJson("default");
+        JsonNode config = utils.readJson("config/default.json");
+        JsonNode languageSet = utils.readJson("languages/" + language + ".json");
 
         // Constants
-        title = config.get("title").asText();
         width = config.get("width").asInt();
         height = config.get("height").asInt();
         fieldSize = config.get("fieldSize").asInt();
         tries = config.get("tries").asInt();
         isResizable = config.get("isResizable").asBoolean();
 
+        // Arrows
+        arrows = new Image[4];
+        arrows[0] = utils.reader(config.get("arrowUp").asText());
+        arrows[1] = utils.reader(config.get("arrowLeft").asText());
+        arrows[2] = utils.reader(config.get("arrowDown").asText());
+        arrows[3] = utils.reader(config.get("arrowRight").asText());
+
+        // Directions
+        directions = new String[4];
+        directions[0] = languageSet.get("up").asText();
+        directions[1] = languageSet.get("left").asText();
+        directions[2] = languageSet.get("down").asText();
+        directions[3] = languageSet.get("right").asText();
+
         // Messages
-        invalidMove = config.get("invalidMove").asText();
-        invalidObstacle = config.get("invalidObstacle").asText();
-        catWon = config.get("catWon").asText();
-        catcherWon = config.get("catcherWon").asText();
+        title = languageSet.get("title").asText();
+        invalidMove = languageSet.get("invalidMove").asText();
+        invalidObstacle = languageSet.get("invalidObstacle").asText();
+        catWon = languageSet.get("catWon").asText();
+        catcherWon = languageSet.get("catcherWon").asText();
+        catIsNotOnMove = languageSet.get("catIsNotOnMove").asText();
+        catcherIsNotOnMove = languageSet.get("catcherIsNotOnMove").asText();
+        triesLeft = languageSet.get("triesLeft").asText();
+        catIsOnMove = languageSet.get("catIsOnMove").asText();
+        catcherIsOnMove = languageSet.get("catcherIsOnMove").asText();
+
 
         dimension = new Dimension(width, height);
     }
@@ -107,6 +139,13 @@ public class Config {
         return isResizable;
     }
 
+    public Image[] getArrows() {
+        return arrows;
+    }
+
+    public String getDirections(int index) {
+        return directions[index];
+    }
 
     // Getter Messages
     public String getCatcherWon() {
@@ -123,5 +162,25 @@ public class Config {
 
     public String getInvalidObstacle() {
         return invalidObstacle;
+    }
+
+    public String getCatIsNotOnMove() {
+        return catIsNotOnMove;
+    }
+
+    public String getCatcherIsNotOnMove() {
+        return catcherIsNotOnMove;
+    }
+
+    public String getTriesLeft() {
+        return triesLeft;
+    }
+
+    public String getCatIsOnMove() {
+        return catIsOnMove;
+    }
+
+    public String getCatcherIsOnMove() {
+        return catcherIsOnMove;
     }
 }
