@@ -1,4 +1,4 @@
-package de.MCmoderSD;
+package de.MCmoderSD.utilities;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

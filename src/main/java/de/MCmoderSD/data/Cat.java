@@ -1,4 +1,6 @@
-package de.MCmoderSD;
+package de.MCmoderSD.data;
+
+import de.MCmoderSD.main.Config;
 
 import java.awt.*;
 

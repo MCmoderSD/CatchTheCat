@@ -1,4 +1,7 @@
-package de.MCmoderSD;
+package de.MCmoderSD.core;
+
+import de.MCmoderSD.data.Data;
+import de.MCmoderSD.main.Config;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

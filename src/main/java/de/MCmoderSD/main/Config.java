@@ -1,6 +1,9 @@
-package de.MCmoderSD;
+package de.MCmoderSD.main;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.MCmoderSD.core.Controller;
+import de.MCmoderSD.data.Data;
+import de.MCmoderSD.utilities.Utils;
 
 import java.awt.*;
 

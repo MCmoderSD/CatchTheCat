@@ -1,4 +1,6 @@
-package de.MCmoderSD;
+package de.MCmoderSD.core;
+
+import de.MCmoderSD.main.Config;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,10 +29,12 @@ public class UI extends JFrame {
 
 
         // Calculate dimensions
-        int buttonPanelSize = Math.min(config.getWidth(), config.getHeight());
-        int buttonSize = buttonPanelSize / config.getFieldSize();
-        int menuSize = Math.max(config.getWidth(), config.getHeight()) - buttonPanelSize;
-        int padding = buttonPanelSize / 25;
+        int max = Math.max(config.getWidth(), config.getHeight());
+        int min = Math.min(config.getWidth(), config.getHeight());
+        int padding = max / 50;
+        int buttonPanelSize = min + padding * 2;
+        int buttonSize = min / config.getFieldSize();
+        int menuSize = max - buttonPanelSize - 2 * padding;
         int menuButtonSize = 2 * padding;
         Font defaultFont = new Font("Roboto", Font.PLAIN, 20);
 
@@ -51,16 +55,14 @@ public class UI extends JFrame {
 
         // Tries Label
         triesLabel = new JLabel();
-        triesLabel.setBounds(padding, padding, buttonPanelSize - menuSize - 2 * padding, 2 * padding);
-        triesLabel.setFont(defaultFont);
+        triesLabel.setBounds(padding, 0, buttonPanelSize - menuSize - 2 * padding, padding);
         triesLabel.setText(config.getTriesLeft() + config.getTries());
+        triesLabel.setFont(defaultFont);
         logPanel.add(triesLabel);
-
-
 
         // Info Area
         infoArea = new JTextArea();
-        infoArea.setBounds(padding, padding + triesLabel.getHeight(), buttonPanelSize - menuSize - 2 * padding, menuSize - 2 * padding);
+        infoArea.setBounds(padding, triesLabel.getHeight(), buttonPanelSize - 2 * padding, menuSize - 2 * padding);
         infoArea.setCaretPosition(infoArea.getText().length());
         infoArea.setBackground(Color.WHITE);
         infoArea.setFont(defaultFont);
@@ -69,7 +71,7 @@ public class UI extends JFrame {
         clearLog();
 
         JScrollPane scrollPane = new JScrollPane(infoArea);
-        scrollPane.setBounds(padding, padding + triesLabel.getHeight(), buttonPanelSize - menuSize - 2 * padding, menuSize - 2 * padding);
+        scrollPane.setBounds(padding, padding + triesLabel.getHeight(), buttonPanelSize - 2 * padding - triesLabel.getHeight(), menuSize - 2 * padding);
         scrollPane.setBorder(null);
         logPanel.add(scrollPane);
         pack();
@@ -86,10 +88,10 @@ public class UI extends JFrame {
 
         // Calculate direction button bounds
         for (int i = 0; i < 4; i++) directionButtonBounds[i] = new Rectangle();
-        directionButtonBounds[0].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2), menuPanel.getHeight() / 4, menuButtonSize, menuButtonSize);
-        directionButtonBounds[1].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) - menuButtonSize, menuPanel.getHeight() / 4 + menuButtonSize, menuButtonSize, menuButtonSize);
-        directionButtonBounds[2].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2), menuPanel.getHeight() / 4 + 2 * menuButtonSize, menuButtonSize, menuButtonSize);
-        directionButtonBounds[3].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) + menuButtonSize, menuPanel.getHeight() / 4 + menuButtonSize, menuButtonSize, menuButtonSize);
+        directionButtonBounds[0].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) - padding, menuPanel.getHeight() / 4, menuButtonSize, menuButtonSize);
+        directionButtonBounds[1].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) - menuButtonSize - padding, menuPanel.getHeight() / 4 + menuButtonSize, menuButtonSize, menuButtonSize);
+        directionButtonBounds[2].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) - padding, menuPanel.getHeight() / 4 + 2 * menuButtonSize, menuButtonSize, menuButtonSize);
+        directionButtonBounds[3].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) + menuButtonSize - padding, menuPanel.getHeight() / 4 + menuButtonSize, menuButtonSize, menuButtonSize);
 
         // Configure direction buttons
         for (int i = 0; i < 4; i++) {
@@ -105,11 +107,19 @@ public class UI extends JFrame {
         }
 
         // Create button panel
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel() {
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.setColor(Color.BLACK);
+                g.drawRect(padding - 1, padding - 1, config.getFieldSize() * buttonSize + 1, config.getFieldSize() * buttonSize + 1);
+            }
+        };
+
         buttonPanel.setLayout(null);
         buttonPanel.setPreferredSize(new Dimension(buttonPanelSize, buttonPanelSize));
-        buttonPanel.setBackground(Color.RED);
-        add(buttonPanel, BorderLayout.CENTER);
+        buttonPanel.setBackground(Color.WHITE);
+        add(buttonPanel, BorderLayout.WEST);
         pack();
 
         // Center JFrame
@@ -123,7 +133,7 @@ public class UI extends JFrame {
             for (int j = 0; j < config.getFieldSize(); j++) {
                 // Create button
                 buttons[i][j] = new JButton();
-                buttons[i][j].setBounds(i * buttonSize, j * buttonSize, buttonSize, buttonSize);
+                buttons[i][j].setBounds(padding + i * buttonSize, padding + j * buttonSize, buttonSize, buttonSize);
                 buttons[i][j].setBackground(Color.WHITE);
                 //buttons[i][j].setBorder(null); TODO: Remove
 
