@@ -1,3 +1,5 @@
+package de.MCmoderSD;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -68,7 +70,7 @@ public class UI extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(infoArea);
         scrollPane.setBounds(padding, padding + triesLabel.getHeight(), buttonPanelSize - menuSize - 2 * padding, menuSize - 2 * padding);
-        scrollPane.setVisible(true);
+        scrollPane.setBorder(null);
         logPanel.add(scrollPane);
         pack();
 

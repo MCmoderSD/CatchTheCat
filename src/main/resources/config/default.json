@@ -4,8 +4,8 @@
   "fieldSize": 8,
   "isResizable": false,
   "tries": 12,
-  "arrowUp": "Images/up.png",
-  "arrowLeft": "Images/left.png",
-  "arrowDown": "Images/down.png",
-  "arrowRight": "Images/right.png"
+  "arrowUp": "/Images/up.png",
+  "arrowLeft": "/Images/left.png",
+  "arrowDown": "/Images/down.png",
+  "arrowRight": "/Images/right.png"
 }

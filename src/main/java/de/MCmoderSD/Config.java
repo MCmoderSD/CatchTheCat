@@ -1,6 +1,7 @@
+package de.MCmoderSD;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
-import javax.swing.*;
 import java.awt.*;
 
 @SuppressWarnings("unused")
@@ -42,8 +43,8 @@ public class Config {
         if (args.length != 0) language = args[0];
 
         // Read config
-        JsonNode config = utils.readJson("config/default.json");
-        JsonNode languageSet = utils.readJson("languages/" + language + ".json");
+        JsonNode config = utils.readJson("/config/default.json");
+        JsonNode languageSet = utils.readJson("/languages/" + language + ".json");
 
         // Constants
         width = config.get("width").asInt();

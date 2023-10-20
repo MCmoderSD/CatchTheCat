@@ -1,3 +1,5 @@
+package de.MCmoderSD;
+
 import java.awt.*;
 
 public class Cat extends Point {
