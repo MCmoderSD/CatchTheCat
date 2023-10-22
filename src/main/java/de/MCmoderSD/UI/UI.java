@@ -1,6 +1,8 @@
-package de.MCmoderSD.core;
+package de.MCmoderSD.UI;
 
+import de.MCmoderSD.core.Controller;
 import de.MCmoderSD.main.Config;
+import de.MCmoderSD.utilities.Calculate;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,14 +57,14 @@ public class UI extends JFrame {
 
         // Tries Label
         triesLabel = new JLabel();
-        triesLabel.setBounds(padding, 0, buttonPanelSize - menuSize - 2 * padding, padding);
+        triesLabel.setBounds(padding, 0, buttonPanelSize, padding * 2);
         triesLabel.setText(config.getTriesLeft() + config.getTries());
         triesLabel.setFont(defaultFont);
         logPanel.add(triesLabel);
 
         // Info Area
         infoArea = new JTextArea();
-        infoArea.setBounds(padding, triesLabel.getHeight(), buttonPanelSize - 2 * padding, menuSize - 2 * padding);
+        infoArea.setBounds(padding, triesLabel.getHeight(), buttonPanelSize - 2 * padding, menuSize - 2 * padding - triesLabel.getHeight());
         infoArea.setCaretPosition(infoArea.getText().length());
         infoArea.setBackground(Color.WHITE);
         infoArea.setFont(defaultFont);
@@ -71,16 +73,16 @@ public class UI extends JFrame {
         clearLog();
 
         JScrollPane scrollPane = new JScrollPane(infoArea);
-        scrollPane.setBounds(padding, padding + triesLabel.getHeight(), buttonPanelSize - 2 * padding - triesLabel.getHeight(), menuSize - 2 * padding);
+        scrollPane.setBounds(padding, triesLabel.getHeight(), buttonPanelSize - 2 * padding, menuSize - triesLabel.getHeight());
         scrollPane.setBorder(null);
         logPanel.add(scrollPane);
         pack();
 
         // Create direction buttons
         JButton[] directionButtons = new JButton[4];
-        String[] directionButtonNames = {"Up", "Left", "Down", "Right"};
         Rectangle[] directionButtonBounds = new Rectangle[4];
         ImageIcon[] directionButtonIcons = new ImageIcon[4];
+        int directionButtonHeight = 2 * padding;
 
         //Resize the Images
         Image[] arrows = config.getArrows();
@@ -88,19 +90,18 @@ public class UI extends JFrame {
 
         // Calculate direction button bounds
         for (int i = 0; i < 4; i++) directionButtonBounds[i] = new Rectangle();
-        directionButtonBounds[0].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) - padding, menuPanel.getHeight() / 4, menuButtonSize, menuButtonSize);
-        directionButtonBounds[1].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) - menuButtonSize - padding, menuPanel.getHeight() / 4 + menuButtonSize, menuButtonSize, menuButtonSize);
-        directionButtonBounds[2].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) - padding, menuPanel.getHeight() / 4 + 2 * menuButtonSize, menuButtonSize, menuButtonSize);
-        directionButtonBounds[3].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) + menuButtonSize - padding, menuPanel.getHeight() / 4 + menuButtonSize, menuButtonSize, menuButtonSize);
+        directionButtonBounds[0].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2), directionButtonHeight, menuButtonSize, menuButtonSize);
+        directionButtonBounds[1].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) - menuButtonSize, directionButtonHeight + menuButtonSize, menuButtonSize, menuButtonSize);
+        directionButtonBounds[2].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2), directionButtonHeight + 2 * menuButtonSize, menuButtonSize, menuButtonSize);
+        directionButtonBounds[3].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) + menuButtonSize, directionButtonHeight + menuButtonSize, menuButtonSize, menuButtonSize);
 
         // Configure direction buttons
         for (int i = 0; i < 4; i++) {
-            directionButtons[i] = new JButton(directionButtonNames[i]);
+            directionButtons[i] = new JButton();
             directionButtons[i].setBounds(directionButtonBounds[i]);
             directionButtons[i].setIcon(directionButtonIcons[i]);
             directionButtons[i].setToolTipText(config.getDirections(i));
             directionButtons[i].setBorder(null);
-            directionButtons[i].setText("");
             int tempI = i; // Needed for lambda expression
             directionButtons[i].addActionListener(e -> controller.catPlaysMove(tempI));
             menuPanel.add(directionButtons[i]);
@@ -123,7 +124,7 @@ public class UI extends JFrame {
         pack();
 
         // Center JFrame
-        setLocation(config.getUtils().centerFrame(this));
+        setLocation(Calculate.centerFrame(this));
 
         // Create a button array
         buttons = new JButton[config.getFieldSize()][config.getFieldSize()];

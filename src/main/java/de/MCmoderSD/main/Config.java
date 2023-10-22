@@ -3,14 +3,15 @@ package de.MCmoderSD.main;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.MCmoderSD.core.Controller;
 import de.MCmoderSD.data.Data;
-import de.MCmoderSD.utilities.Utils;
+import de.MCmoderSD.utilities.ImageReader;
+import de.MCmoderSD.utilities.JsonReader;
 
 import java.awt.*;
 
 @SuppressWarnings("unused")
 public class Config {
     // Associations
-    private final Utils utils;
+    private final ImageReader imageReader;
     private Controller controller;
     private Data data;
 
@@ -39,15 +40,16 @@ public class Config {
 
     // Constructor
     public Config(String[] args) {
-        utils = new Utils();
         this.args = args;
 
         String language = "en";
         if (args.length != 0) language = args[0];
 
         // Read config
-        JsonNode config = utils.readJson("/config/default.json");
-        JsonNode languageSet = utils.readJson("/languages/" + language + ".json");
+        JsonReader jsonReader = new JsonReader();
+        JsonNode config = jsonReader.read("/config/default.json");
+        JsonNode languageSet = jsonReader.read("/languages/" + language + ".json");
+
 
         // Constants
         width = config.get("width").asInt();
@@ -56,12 +58,15 @@ public class Config {
         tries = config.get("tries").asInt();
         isResizable = config.get("isResizable").asBoolean();
 
+
+        imageReader = new ImageReader();
+
         // Arrows
         arrows = new Image[4];
-        arrows[0] = utils.reader(config.get("arrowUp").asText());
-        arrows[1] = utils.reader(config.get("arrowLeft").asText());
-        arrows[2] = utils.reader(config.get("arrowDown").asText());
-        arrows[3] = utils.reader(config.get("arrowRight").asText());
+        arrows[0] = imageReader.read(config.get("arrowUp").asText());
+        arrows[1] = imageReader.read(config.get("arrowLeft").asText());
+        arrows[2] = imageReader.read(config.get("arrowDown").asText());
+        arrows[3] = imageReader.read(config.get("arrowRight").asText());
 
         // Directions
         directions = new String[4];
@@ -97,8 +102,8 @@ public class Config {
 
 
     // Getter Associations
-    public Utils getUtils() {
-        return utils;
+    public ImageReader getImageReader() {
+        return imageReader;
     }
 
     public Controller getController() {
