@@ -5,13 +5,13 @@ import java.sql.Connection;
 @SuppressWarnings("unused")
 public class MySQL {
     private final String host;
-    private final String port;
+    private final int port;
     private final String database;
     private final String username;
     private final String password;
     private Connection connection;
 
-    public MySQL(String host, String port, String database, String username, String password) {
+    public MySQL(String host, int port, String database, String username, String password) {
         this.host = host;
         this.port = port;
         this.database = database;
@@ -43,6 +43,9 @@ public class MySQL {
         }
     }
 
+    public String updateGameState(String gameID) {
+        return null; // TODO implement
+    }
 
     // Getter Constants
     public Connection getConnection() {
@@ -53,7 +56,7 @@ public class MySQL {
         return host;
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

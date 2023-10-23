@@ -3,8 +3,10 @@ package de.MCmoderSD.main;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.MCmoderSD.core.Controller;
 import de.MCmoderSD.data.Data;
+import de.MCmoderSD.utilities.Calculate;
 import de.MCmoderSD.utilities.ImageReader;
 import de.MCmoderSD.utilities.JsonReader;
+import de.MCmoderSD.utilities.MySQL;
 
 import java.awt.*;
 
@@ -12,12 +14,14 @@ import java.awt.*;
 public class Config {
     // Associations
     private final ImageReader imageReader;
+    private final MySQL mySQL;
     private Controller controller;
     private Data data;
 
     // Constants
     private final String[] args;
     private final String language;
+    private final String gameID;
     private final int width;
     private final int height;
     private final Dimension dimension;
@@ -44,24 +48,35 @@ public class Config {
         this.args = args;
 
 
-        if (args.length != 0) language = args[0];
-        else language = "en";
+
+        if (args.length == 0) language = "en";
+        else language = args[0];
+        if (args.length == 2) gameID = args[1];
+        else gameID = null;
 
         // Read config
         JsonReader jsonReader = new JsonReader();
-        JsonNode config = jsonReader.read("/config/default.json");
-        JsonNode languageSet = jsonReader.read("/languages/" + language + ".json");
+        JsonNode database = jsonReader.read("/config/database.json");
 
+        mySQL = new MySQL(database.get("host").asText(), database.get("port").asInt(), database.get("database").asText(), database.get("username").asText(), database.get("password").asText());
 
         // Constants
+        JsonNode config = jsonReader.read("/config/default.json");
         width = config.get("width").asInt();
         height = config.get("height").asInt();
-        fieldSize = config.get("fieldSize").asInt();
-        tries = config.get("tries").asInt();
         isResizable = config.get("isResizable").asBoolean();
-
-
         imageReader = new ImageReader();
+
+        String[] databaseArgs = null;
+        if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.updateGameState(gameID));
+
+        if (databaseArgs == null) {
+            fieldSize = config.get("fieldSize").asInt();
+            tries = config.get("tries").asInt();
+        } else {
+            fieldSize = Integer.parseInt(databaseArgs[0]);
+            tries = Integer.parseInt(databaseArgs[1]);
+        }
 
         // Arrows
         arrows = new Image[4];
@@ -71,6 +86,7 @@ public class Config {
         arrows[3] = imageReader.read(config.get("arrowRight").asText());
 
         // Directions
+        JsonNode languageSet = jsonReader.read("/languages/" + language + ".json");
         directions = new String[4];
         directions[0] = languageSet.get("up").asText();
         directions[1] = languageSet.get("left").asText();
@@ -108,6 +124,10 @@ public class Config {
         return imageReader;
     }
 
+    public MySQL getMySQL() {
+        return mySQL;
+    }
+
     public Controller getController() {
         return controller;
     }
@@ -124,6 +144,10 @@ public class Config {
 
     public String getLanguage() {
         return language;
+    }
+
+    public String getGameID() {
+        return gameID;
     }
 
     public int getWidth() {

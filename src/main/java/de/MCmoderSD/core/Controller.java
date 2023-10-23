@@ -3,9 +3,11 @@ package de.MCmoderSD.core;
 import de.MCmoderSD.UI.UI;
 import de.MCmoderSD.data.Data;
 import de.MCmoderSD.main.Config;
+import de.MCmoderSD.utilities.Calculate;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 
 public class Controller {
     // Associations
@@ -46,7 +48,7 @@ public class Controller {
         for (Point obstacle : data.getObstacles()) if (point.equals(obstacle)) return false; // Obstacle can't be placed on another obstacle
 
         // Check if an obstacle is already placed and if there are any tries left
-        return calculateTries() > 0;
+        return Calculate.calculateTriesLeft(data, config) > 0;
     }
 
     // Check if somebody won
@@ -149,7 +151,7 @@ public class Controller {
         }
 
         checkForWinner(); // Check if somebody won
-        ui.updateTries(calculateTries()); // Update tries
+        ui.updateTries(Calculate.calculateTriesLeft(data, config)); // Update tries
         }
     }
 }

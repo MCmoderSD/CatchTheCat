@@ -64,28 +64,34 @@ public class Calculate {
         else return Color.WHITE;
     }
 
+    // Calculate tries left
+    public static int calculateTriesLeft(Data data, Config config) {
+        int triesLeft = config.getTries();
+        Point[] obstacles = data.getObstacles();
+        for (Point obstacle : obstacles) if (obstacle != null) --triesLeft;
+        return triesLeft;
+    }
+
+    // Encoder
     public static String encodeData(Data data, Config config) {
         String end = ";";
+        int tries = config.getTries();
+        int triesLeft = calculateTriesLeft(data, config);
 
-        // Encode Config Data
-        String confPack = config.getFieldSize() + end + config.getTries();
+        // Encode Config
+        String confPack = config.getFieldSize() + end + tries;
 
         // Encode Data
-        int triesLeft = config.getTries();
         String dataPack;
-        String[] obstaclePackTemp = new String[config.getTries()];
-        Point[] obstacles = data.getObstacles();
-        for (int i = 0; i < config.getTries(); i++) {
-            if (obstacles[i] != null) {
-                obstaclePackTemp[i] = String.valueOf(obstacles[i].x) + ':' + obstacles[i].y;
-                --triesLeft;
-            }
-        }
+        String[] obstaclePackTemp = new String[tries];
 
-        String[] obstaclePack = new String[config.getTries()-triesLeft];
-        for (int i = 0; i < obstaclePack.length; i++) {
-            if (obstaclePackTemp[i] != null) obstaclePack[i] = obstaclePackTemp[i];
-        }
+        // Encode Obstacles
+        Point[] obstacles = data.getObstacles();
+        for (int i = 0; i < tries; i++) if (obstacles[i] != null) obstaclePackTemp[i] = String.valueOf(obstacles[i].x) + ':' + obstacles[i].y;
+
+        // Delete Null Values
+        String[] obstaclePack = new String[tries-triesLeft];
+        for (int i = 0; i < obstaclePack.length; i++) if (obstaclePackTemp[i] != null) obstaclePack[i] = obstaclePackTemp[i];
 
         dataPack = triesLeft + end + data.getCat().x + ':' + data.getCat().y + end + String.join(end, obstaclePack);
 
@@ -94,7 +100,20 @@ public class Calculate {
     }
 
     // Decoder
-    private static void decodeData(String dataPack) {
+    public static String[] decodeData(String encodedData) {
+        String[] parts = encodedData.split(";");
 
+        String[] result = new String[3];
+        result[0] = parts[0];
+        result[1] = parts[1];
+
+        StringBuilder rest = new StringBuilder();
+        for (int i = 2; i < parts.length; i++) {
+            if (i != 2) rest.append(";");
+            rest.append(parts[i]);
+        }
+        result[2] = rest.toString();
+
+        return result;
     }
 }

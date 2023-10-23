@@ -1,0 +1,7 @@
+{
+  "host": "https://www.MCmoderSD.de",
+  "port": 3306,
+  "database": "CTC",
+  "user": "CTC",
+  "password": "CTC"
+}
