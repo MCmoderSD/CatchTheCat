@@ -17,7 +17,7 @@ public class Config {
 
     // Constants
     private final String[] args;
-    private final String title;
+    private final String language;
     private final int width;
     private final int height;
     private final Dimension dimension;
@@ -26,7 +26,8 @@ public class Config {
     private final boolean isResizable;
     private final Image[] arrows;
 
-    // Messages
+    // Language
+    private final String title;
     private final String invalidMove;
     private final String invalidObstacle;
     private final String catWon;
@@ -42,8 +43,9 @@ public class Config {
     public Config(String[] args) {
         this.args = args;
 
-        String language = "en";
+
         if (args.length != 0) language = args[0];
+        else language = "en";
 
         // Read config
         JsonReader jsonReader = new JsonReader();
@@ -120,8 +122,8 @@ public class Config {
         return args;
     }
 
-    public String getTitle() {
-        return title;
+    public String getLanguage() {
+        return language;
     }
 
     public int getWidth() {
@@ -157,6 +159,10 @@ public class Config {
     }
 
     // Getter Messages
+    public String getTitle() {
+        return title;
+    }
+
     public String getCatcherWon() {
         return catcherWon;
     }

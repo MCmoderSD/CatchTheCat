@@ -26,12 +26,6 @@ public class Controller {
 
     // Methods
 
-    // Calculate tries
-    private int calculateTries() {
-        int tries = 0;
-        for (Point obstacle : data.getObstacles()) if (obstacle == null) ++tries;
-        return tries;
-    }
 
     // Check if move is valid
     private boolean isMoveValid(Point point) {

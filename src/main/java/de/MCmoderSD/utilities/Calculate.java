@@ -1,5 +1,8 @@
 package de.MCmoderSD.utilities;
 
+import de.MCmoderSD.data.Data;
+import de.MCmoderSD.main.Config;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -59,5 +62,39 @@ public class Calculate {
 
         if (r + g + b > 382) return Color.BLACK;
         else return Color.WHITE;
+    }
+
+    public static String encodeData(Data data, Config config) {
+        String end = ";";
+
+        // Encode Config Data
+        String confPack = config.getFieldSize() + end + config.getTries();
+
+        // Encode Data
+        int triesLeft = config.getTries();
+        String dataPack;
+        String[] obstaclePackTemp = new String[config.getTries()];
+        Point[] obstacles = data.getObstacles();
+        for (int i = 0; i < config.getTries(); i++) {
+            if (obstacles[i] != null) {
+                obstaclePackTemp[i] = String.valueOf(obstacles[i].x) + ':' + obstacles[i].y;
+                --triesLeft;
+            }
+        }
+
+        String[] obstaclePack = new String[config.getTries()-triesLeft];
+        for (int i = 0; i < obstaclePack.length; i++) {
+            if (obstaclePackTemp[i] != null) obstaclePack[i] = obstaclePackTemp[i];
+        }
+
+        dataPack = triesLeft + end + data.getCat().x + ':' + data.getCat().y + end + String.join(end, obstaclePack);
+
+        // Finalize Package
+        return confPack + end + dataPack;
+    }
+
+    // Decoder
+    private static void decodeData(String dataPack) {
+
     }
 }
