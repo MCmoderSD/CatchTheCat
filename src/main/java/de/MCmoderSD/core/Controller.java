@@ -35,6 +35,7 @@ public class Controller {
                     } catch (InterruptedException e) {
                         System.err.println(e.getMessage());
                     }
+                    data.getEncodedData();
                     updateGameState();
                 }
             }
