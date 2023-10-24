@@ -25,6 +25,8 @@ public class Controller {
         data = new Data(config);
         config.setData(data);
 
+        if (config.getMySQL().isConnected()) data.getEncodedData();
+
         ui = new UI(config);
 
         // Debug
@@ -178,7 +180,7 @@ public class Controller {
         String gameID = Calculate.generateRandomID();
         config.getMySQL().setGameID(gameID);
         config.getMySQL().connect();
-        config.getMySQL().updateEncodedData(Calculate.encodeData(data, config));
+        data.updateEncodedData();
 
         ui.appendLog(config.getRoomID() + gameID);
         ui.hideHostButton();

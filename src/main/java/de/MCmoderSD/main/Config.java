@@ -50,7 +50,7 @@ public class Config {
         this.args = args;
 
         if (args.length == 0) language = "en";
-        else language = args[0];
+        else language = args[0].toLowerCase();
         if (args.length == 2) gameID = args[1];
         else gameID = null;
 

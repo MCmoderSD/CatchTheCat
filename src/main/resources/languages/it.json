@@ -12,5 +12,7 @@
   "up": "Su",
   "down": "Giù",
   "left": "Sinistra",
-  "right": "Destra"
+  "right": "Destra",
+  "host": "Host",
+  "roomID": ""
 }

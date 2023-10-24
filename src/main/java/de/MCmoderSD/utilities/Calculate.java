@@ -125,7 +125,7 @@ public class Calculate {
     // GameID Generator
     public static String generateRandomID() {
         final String characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-        final int length = 10;
+        final int length = 6;
 
         SecureRandom random = new SecureRandom();
         StringBuilder idBuilder = new StringBuilder();

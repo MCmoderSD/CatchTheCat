@@ -26,14 +26,14 @@ public class Data {
         obstacles = new Point[config.getTries()];
     }
 
-    private void updateEncodedData() {
+    public void updateEncodedData() {
         MySQL mySQL = config.getMySQL();
         String encodedData = Calculate.encodeData(this, config);
         if (!mySQL.isConnected()) return;
         mySQL.updateEncodedData(encodedData);
     }
 
-    private void getEncodedData() {
+    public void getEncodedData() {
         MySQL mySQL = config.getMySQL();
         if (!mySQL.isConnected()) return;
         String encodedData = mySQL.getEncodedData();

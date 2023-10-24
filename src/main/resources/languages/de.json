@@ -12,5 +12,7 @@
   "up": "Hoch",
   "down": "Runter",
   "left": "Links",
-  "right": "Rechts"
+  "right": "Rechts",
+  "host": "Host",
+  "roomID": "Raum Code: "
 }
