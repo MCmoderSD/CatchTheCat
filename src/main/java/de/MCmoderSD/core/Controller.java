@@ -27,14 +27,16 @@ public class Controller {
         data = new Data(config);
         config.setData(data);
 
-        if (config.getMySQL().isConnected()) new Thread(() -> {
+        new Thread(() -> {
             while (true) {
-                try {
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    System.err.println(e.getMessage());
+                if (config.getMySQL().isConnected()) {
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        System.err.println(e.getMessage());
+                    }
+                    updateGameState();
                 }
-                updateGameState();
             }
         }).start();
         ui = new UI(config);
