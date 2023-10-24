@@ -1,9 +1,9 @@
 package de.MCmoderSD.data;
 
 import de.MCmoderSD.main.Config;
-import de.MCmoderSD.utilities.Calculate;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class Data {
 
@@ -21,6 +21,25 @@ public class Data {
         catPosition = new Cat(config);
         obstacles = new Point[config.getTries()];
     }
+
+    private void decodeData(String encodedData) {
+        String[] parts = encodedData.split(";");
+
+        isCatOnMove = Objects.equals(parts[2], "1");
+
+        String[] catCords = parts[3].split(":");
+        setCat(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
+
+        int obstaclesPlaced = parts.length-4;
+
+        for (int i = 0; i < obstaclesPlaced; i++) {
+            String[] obstacleCords = parts[4+i].split(":");
+            int x = Integer.parseInt(obstacleCords[0]);
+            int y = Integer.parseInt(obstacleCords[1]);
+            obstacles[0] = new Point(x, y);
+        }
+    }
+
 
     // Getter
     public Point getCat() {

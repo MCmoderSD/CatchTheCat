@@ -58,7 +58,8 @@ public class Config {
         JsonReader jsonReader = new JsonReader();
         JsonNode database = jsonReader.read("/config/database.json");
 
-        mySQL = new MySQL(database.get("host").asText(), database.get("port").asInt(), database.get("database").asText(), database.get("username").asText(), database.get("password").asText());
+        mySQL = null;
+        //mySQL = new MySQL(database.get("host").asText(), database.get("port").asInt(), database.get("database").asText(), database.get("username").asText(), database.get("password").asText());
 
         // Constants
         JsonNode config = jsonReader.read("/config/default.json");

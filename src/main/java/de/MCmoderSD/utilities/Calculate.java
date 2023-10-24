@@ -85,6 +85,10 @@ public class Calculate {
         String dataPack;
         String[] obstaclePackTemp = new String[tries];
 
+        // Encode CatIsOnMove
+        int isCatOnMove = 0;
+        if (data.isCatOnMove()) isCatOnMove = 1;
+
         // Encode Obstacles
         Point[] obstacles = data.getObstacles();
         for (int i = 0; i < tries; i++) if (obstacles[i] != null) obstaclePackTemp[i] = String.valueOf(obstacles[i].x) + ':' + obstacles[i].y;
@@ -93,7 +97,7 @@ public class Calculate {
         String[] obstaclePack = new String[tries-triesLeft];
         for (int i = 0; i < obstaclePack.length; i++) if (obstaclePackTemp[i] != null) obstaclePack[i] = obstaclePackTemp[i];
 
-        dataPack = triesLeft + end + data.getCat().x + ':' + data.getCat().y + end + String.join(end, obstaclePack);
+        dataPack = isCatOnMove + end + data.getCat().x + ':' + data.getCat().y + end + String.join(end, obstaclePack);
 
         // Finalize Package
         return confPack + end + dataPack;
