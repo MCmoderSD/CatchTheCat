@@ -111,7 +111,7 @@ public class UI extends JFrame {
 
         // Host Button
         hostButton = new JButton();
-        hostButton.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, (int) (menuPanel.getHeight() - menuButtonSize), 3 * menuButtonSize, menuButtonSize);
+        hostButton.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - menuButtonSize, 3 * menuButtonSize, menuButtonSize);
         hostButton.setText(config.getHost());
         hostButton.setFont(defaultFont);
         hostButton.addActionListener(e -> controller.hostGame());
@@ -171,19 +171,20 @@ public class UI extends JFrame {
         });
 
         // Set cat's position
-        setButton(config.getData().getCat(), config.getData().getCat());
+        setCat(config.getData().getCat());
         setVisible(true); // Show UI
     }
 
     // Setter
-    public void setButton(Point newButton, Point oldButton) {
-        // For cat movement
-        buttons[oldButton.x][oldButton.y].setBackground(Color.WHITE);
+
+    // For cat movement
+    public void setCat(Point newButton) {
+        for (int i = 0; i < config.getFieldSize(); i++) for (int j = 0; j < config.getFieldSize(); j++) buttons[i][j].setBackground(Color.WHITE);
         buttons[newButton.x][newButton.y].setBackground(Color.BLUE);
     }
 
     // For obstacle placement
-    public void setButton(Point newButton) {
+    public void setObstacle(Point newButton) {
         buttons[newButton.x][newButton.y].setBackground(Color.RED);
     }
 

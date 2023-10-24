@@ -7,8 +7,6 @@ import de.MCmoderSD.utilities.MySQL;
 import java.awt.*;
 import java.util.Objects;
 
-import static java.lang.Thread.sleep;
-
 public class Data {
 
     // Variables
@@ -27,16 +25,7 @@ public class Data {
         catPosition = new Cat(config);
         obstacles = new Point[config.getTries()];
 
-        new Thread(() -> {
-            while (true) {
-                try {
-                    sleep(250);
-                    updateEncodedData();
-                } catch (InterruptedException e) {
-                    System.err.println(e.getMessage());
-                }
-            }
-        }).start();
+
     }
 
     public void updateEncodedData() {

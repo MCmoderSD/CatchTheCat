@@ -10,6 +10,8 @@ import java.awt.event.KeyEvent;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static java.lang.Thread.sleep;
+
 public class Controller {
     // Associations
     private final Config config;
@@ -25,8 +27,16 @@ public class Controller {
         data = new Data(config);
         config.setData(data);
 
-        if (config.getMySQL().isConnected()) data.getEncodedData();
-
+        if (config.getMySQL().isConnected()) new Thread(() -> {
+            while (true) {
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    System.err.println(e.getMessage());
+                }
+                updateGameState();
+            }
+        }).start();
         ui = new UI(config);
 
         // Debug
@@ -101,6 +111,11 @@ public class Controller {
         }
     }
 
+    private void updateGameState() {
+        ui.setCat(data.getCat()); // Update UI
+        for (Point obstacle : data.getObstacles()) if (obstacle != null) ui.setObstacle(obstacle); // Update UI
+    }
+
     // Public Methods
 
     // Convert Key to Point and call catPlaysMove(Point)
@@ -148,10 +163,10 @@ public class Controller {
             // Check if move is valid
             if (!isMoveValid(point)) ui.showMessage(config.getInvalidMove()); // Invalid move
             else {
-                ui.appendLog(config.getCatcherIsOnMove());
-                ui.setButton(point, data.getCat()); // Update UI
                 data.setCat(point); // Update data
                 data.nextMove(); // Next move
+                ui.appendLog(config.getCatcherIsOnMove());
+                updateGameState();
             }
             checkForWinner(); // Check if somebody won
         }
@@ -164,10 +179,10 @@ public class Controller {
         // Check if obstacle placement is valid
         if (!isObstacleValid(point)) ui.showMessage(config.getInvalidObstacle()); // Invalid obstacle
         else {
-            ui.setButton(point); // Update UI
-            ui.appendLog(config.getCatIsOnMove());
             data.setObstacle(point); // Update data
             data.nextMove(); // Next move
+            ui.appendLog(config.getCatIsOnMove());
+            updateGameState();
         }
 
         checkForWinner(); // Check if somebody won
