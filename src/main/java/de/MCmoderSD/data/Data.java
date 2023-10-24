@@ -1,6 +1,8 @@
 package de.MCmoderSD.data;
 
 import de.MCmoderSD.main.Config;
+import de.MCmoderSD.utilities.Calculate;
+import de.MCmoderSD.utilities.MySQL;
 
 import java.awt.*;
 import java.util.Objects;
@@ -10,11 +12,13 @@ public class Data {
     // Variables
     private final Point[] obstacles;
     private final Cat catPosition;
+    private final Config config;
     private boolean isCatOnMove;
 
     // Constructor
     public Data(Config config) {
         config.setData(this);
+        this.config = config;
 
         // Initialize variables
         isCatOnMove = true;
@@ -22,15 +26,28 @@ public class Data {
         obstacles = new Point[config.getTries()];
     }
 
+    private void updateEncodedData() {
+        MySQL mySQL = config.getMySQL();
+        String encodedData = Calculate.encodeData(this, config);
+        if (mySQL == null) return;
+        mySQL.updateEncodedData(encodedData);
+    }
+
+    private void getEncodedData() {
+        MySQL mySQL = config.getMySQL();
+        if (mySQL == null) return;
+        String encodedData = mySQL.getEncodedData();
+        if (encodedData == null) return;
+        decodeData(encodedData);
+    }
+
     public void decodeData(String encodedData) {
         String[] parts = encodedData.split(";");
 
         isCatOnMove = Objects.equals(parts[2], "1");
-        System.out.println(isCatOnMove);
 
         String[] catCords = parts[3].split(":");
         setCat(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
-        System.out.println(catPosition.x + ":" + catPosition.y);
 
         int obstaclesPlaced = parts.length-4;
 
@@ -38,7 +55,6 @@ public class Data {
             String[] obstacleCords = parts[4+i].split(":");
             int x = Integer.parseInt(obstacleCords[0]);
             int y = Integer.parseInt(obstacleCords[1]);
-            System.out.println(x + ":" + y);
             obstacles[0] = new Point(x, y);
         }
     }
@@ -74,5 +90,7 @@ public class Data {
 
     public void nextMove() {
         isCatOnMove = !isCatOnMove;
+        updateEncodedData();
+        getEncodedData();
     }
 }

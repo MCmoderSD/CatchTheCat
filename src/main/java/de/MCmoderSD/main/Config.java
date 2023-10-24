@@ -52,13 +52,13 @@ public class Config {
         if (args.length == 0) language = "en";
         else language = args[0];
         if (args.length == 2) gameID = args[1];
-        else gameID = null;
+        else gameID = Calculate.generateRandomID();
 
         // Read config
         JsonReader jsonReader = new JsonReader();
         JsonNode database = jsonReader.read("/config/database.json");
 
-        mySQL = new MySQL(database.get("host").asText(), database.get("port").asInt(), database.get("database").asText(), database.get("user").asText(), database.get("password").asText());
+        mySQL = new MySQL(database.get("host").asText(), database.get("port").asInt(), database.get("database").asText(), database.get("user").asText(), database.get("password").asText(), database.get("table").asText(), gameID);
         mySQL.connect();
 
         // Constants

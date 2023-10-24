@@ -1,6 +1,9 @@
 package de.MCmoderSD.utilities;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @SuppressWarnings("unused")
 public class MySQL {
@@ -9,20 +12,23 @@ public class MySQL {
     private final String database;
     private final String username;
     private final String password;
+    private final String table;
+    private final String gameID;
     private Connection connection;
 
-    public MySQL(String host, int port, String database, String username, String password) {
+    public MySQL(String host, int port, String database, String username, String password, String table, String gameID) {
         this.host = host;
         this.port = port;
         this.database = database;
         this.username = username;
         this.password = password;
+        this.table = table;
+        this.gameID = gameID;
     }
 
-    public boolean isConnected() {
-        return connection != null;
-    }
+    // Control
 
+    // Connect to MySQL
     public void connect() {
         try {
             if (isConnected()) return;
@@ -33,6 +39,7 @@ public class MySQL {
         }
     }
 
+    // Disconnect from MySQL
     public void disconnect() {
         try {
             if (!isConnected()) return;
@@ -43,8 +50,66 @@ public class MySQL {
         }
     }
 
+    // Select data from MySQL
+
+    // Get encoded data from MySQL
+    public String getEncodedData() {
+        String encodedData = null;
+        try {
+            if (!isConnected()) connect();
+
+            String query = "SELECT encodedData FROM " + table + " WHERE GameID = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, gameID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) encodedData = resultSet.getString("encodedData");
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return encodedData;
+    }
+
+    // Insert data into MySQL
+    public void updateEncodedData(String encodedData) {
+        try {
+            if (!isConnected()) connect();
+
+            // First, try to update the row
+            String updateQuery = "UPDATE " + table + " SET encodedData = ? WHERE GameID = ?";
+            PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
+            updateStatement.setString(1, encodedData);
+            updateStatement.setString(2, gameID);
+
+            int rowsUpdated = updateStatement.executeUpdate();
+            updateStatement.close();
+
+            // If no rows were updated, the gameID doesn't exist, so insert a new row
+            if (rowsUpdated == 0) {
+                String insertQuery = "INSERT INTO " + table + " (GameID, encodedData) VALUES (?, ?)";
+                PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                insertStatement.setString(1, gameID);
+                insertStatement.setString(2, encodedData);
+                insertStatement.executeUpdate();
+                insertStatement.close();
+
+                System.out.println("New row added for GameID " + gameID);
+            } else System.out.println("Encoded Data for GameID " + gameID + " updated successfully.");
+
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+        }
+    }
 
     // Getter Constants
+    public boolean isConnected() {
+        return connection != null;
+    }
+
     public Connection getConnection() {
         return connection;
     }
