@@ -172,4 +172,15 @@ public class Controller {
         ui.updateTries(Calculate.calculateTriesLeft(data, config)); // Update tries
         }
     }
+
+    // Host Game
+    public void hostGame() {
+        String gameID = Calculate.generateRandomID();
+        config.getMySQL().setGameID(gameID);
+        config.getMySQL().connect();
+        config.getMySQL().updateEncodedData(Calculate.encodeData(data, config));
+
+        ui.appendLog(config.getRoomID() + gameID);
+        ui.hideHostButton();
+    }
 }

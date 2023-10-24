@@ -15,6 +15,7 @@ public class UI extends JFrame {
     private final Config config;
     // Variables
     private final JButton[][] buttons;
+    private final JButton hostButton;
     private final JTextArea infoArea;
     private final JLabel triesLabel;
 
@@ -86,14 +87,15 @@ public class UI extends JFrame {
 
         //Resize the Images
         Image[] arrows = config.getArrows();
+        int centeredButtonPosition = (menuPanel.getWidth() - buttonSize) / 2;
         for (int i = 0; i < arrows.length; i++) directionButtonIcons[i] = new ImageIcon(arrows[i].getScaledInstance(menuButtonSize, menuButtonSize, Image.SCALE_DEFAULT));
 
         // Calculate direction button bounds
         for (int i = 0; i < 4; i++) directionButtonBounds[i] = new Rectangle();
-        directionButtonBounds[0].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2), directionButtonHeight, menuButtonSize, menuButtonSize);
-        directionButtonBounds[1].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) - menuButtonSize, directionButtonHeight + menuButtonSize, menuButtonSize, menuButtonSize);
-        directionButtonBounds[2].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2), directionButtonHeight + 2 * menuButtonSize, menuButtonSize, menuButtonSize);
-        directionButtonBounds[3].setBounds(((menuPanel.getWidth() - menuButtonSize) / 2) + menuButtonSize, directionButtonHeight + menuButtonSize, menuButtonSize, menuButtonSize);
+        directionButtonBounds[0].setBounds(centeredButtonPosition, directionButtonHeight, menuButtonSize, menuButtonSize);
+        directionButtonBounds[1].setBounds(centeredButtonPosition - menuButtonSize, directionButtonHeight + menuButtonSize, menuButtonSize, menuButtonSize);
+        directionButtonBounds[2].setBounds(centeredButtonPosition, directionButtonHeight + 2 * menuButtonSize, menuButtonSize, menuButtonSize);
+        directionButtonBounds[3].setBounds(centeredButtonPosition + menuButtonSize, directionButtonHeight + menuButtonSize, menuButtonSize, menuButtonSize);
 
         // Configure direction buttons
         for (int i = 0; i < 4; i++) {
@@ -106,6 +108,15 @@ public class UI extends JFrame {
             directionButtons[i].addActionListener(e -> controller.catPlaysMove(tempI));
             menuPanel.add(directionButtons[i]);
         }
+
+        // Host Button
+        hostButton = new JButton();
+        hostButton.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, (int) (menuPanel.getHeight() - menuButtonSize), 3 * menuButtonSize, menuButtonSize);
+        hostButton.setText(config.getHost());
+        hostButton.setFont(defaultFont);
+        hostButton.addActionListener(e -> controller.hostGame());
+        if (config.getGameID() != null) hideHostButton();
+        menuPanel.add(hostButton);
 
         // Create button panel
         JPanel buttonPanel = new JPanel() {
@@ -136,8 +147,6 @@ public class UI extends JFrame {
                 buttons[i][j] = new JButton();
                 buttons[i][j].setBounds(padding + i * buttonSize, padding + j * buttonSize, buttonSize, buttonSize);
                 buttons[i][j].setBackground(Color.WHITE);
-                //buttons[i][j].setBorder(null); TODO: Remove
-
 
                 // Action listener
                 int tempI = i; // Needed for lambda expression
@@ -197,5 +206,10 @@ public class UI extends JFrame {
     // Clear log
     public void clearLog() {
         infoArea.setText(config.getCatIsOnMove());
+    }
+
+    // Hide Host Button
+    public void hideHostButton() {
+        hostButton.setVisible(false);
     }
 }

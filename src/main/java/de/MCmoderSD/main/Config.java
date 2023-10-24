@@ -42,23 +42,31 @@ public class Config {
     private final String catIsOnMove;
     private final String catcherIsOnMove;
     private final String[] directions;
+    private final String host;
+    private final String roomID;
 
     // Constructor
     public Config(String[] args) {
         this.args = args;
 
-
-
         if (args.length == 0) language = "en";
         else language = args[0];
         if (args.length == 2) gameID = args[1];
-        else gameID = Calculate.generateRandomID();
+        else gameID = null;
 
         // Read config
         JsonReader jsonReader = new JsonReader();
         JsonNode database = jsonReader.read("/config/database.json");
 
-        mySQL = new MySQL(database.get("host").asText(), database.get("port").asInt(), database.get("database").asText(), database.get("user").asText(), database.get("password").asText(), database.get("table").asText(), gameID);
+        mySQL = new MySQL(
+
+                database.get("host").asText(),
+                database.get("port").asInt(),
+                database.get("database").asText(),
+                database.get("user").asText(),
+                database.get("password").asText(),
+                database.get("table").asText(), gameID);
+
         mySQL.connect();
 
         // Constants
@@ -69,7 +77,7 @@ public class Config {
         imageReader = new ImageReader();
 
         String[] databaseArgs = null;
-        //if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.updateGameState(gameID));
+        if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.getEncodedData());
 
         if (databaseArgs == null) {
             fieldSize = config.get("fieldSize").asInt();
@@ -105,7 +113,8 @@ public class Config {
         triesLeft = languageSet.get("triesLeft").asText();
         catIsOnMove = languageSet.get("catIsOnMove").asText();
         catcherIsOnMove = languageSet.get("catcherIsOnMove").asText();
-
+        host = languageSet.get("host").asText();
+        roomID = languageSet.get("roomID").asText();
 
         dimension = new Dimension(width, height);
     }
@@ -222,5 +231,13 @@ public class Config {
 
     public String getCatcherIsOnMove() {
         return catcherIsOnMove;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getRoomID() {
+        return roomID;
     }
 }

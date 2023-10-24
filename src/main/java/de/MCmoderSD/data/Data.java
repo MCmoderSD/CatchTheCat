@@ -29,13 +29,13 @@ public class Data {
     private void updateEncodedData() {
         MySQL mySQL = config.getMySQL();
         String encodedData = Calculate.encodeData(this, config);
-        if (mySQL == null) return;
+        if (!mySQL.isConnected()) return;
         mySQL.updateEncodedData(encodedData);
     }
 
     private void getEncodedData() {
         MySQL mySQL = config.getMySQL();
-        if (mySQL == null) return;
+        if (!mySQL.isConnected()) return;
         String encodedData = mySQL.getEncodedData();
         if (encodedData == null) return;
         decodeData(encodedData);

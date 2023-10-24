@@ -12,5 +12,7 @@
   "up": "up",
   "down": "down",
   "left": "left",
-  "right": "right"
+  "right": "right",
+  "host": "Host",
+  "roomID": "Room ID: "
 }

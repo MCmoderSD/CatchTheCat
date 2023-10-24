@@ -13,8 +13,8 @@ public class MySQL {
     private final String username;
     private final String password;
     private final String table;
-    private final String gameID;
     private Connection connection;
+    private String gameID;
 
     public MySQL(String host, int port, String database, String username, String password, String table, String gameID) {
         this.host = host;
@@ -30,6 +30,7 @@ public class MySQL {
 
     // Connect to MySQL
     public void connect() {
+        if (gameID == null) return;
         try {
             if (isConnected()) return;
             connection = java.sql.DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password);
@@ -50,7 +51,10 @@ public class MySQL {
         }
     }
 
-    // Select data from MySQL
+    // Set gameID
+    public void setGameID(String gameID) {
+        this.gameID = gameID;
+    }
 
     // Get encoded data from MySQL
     public String getEncodedData() {
