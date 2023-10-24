@@ -26,7 +26,7 @@ public class MySQL {
     public void connect() {
         try {
             if (isConnected()) return;
-            connection = java.sql.DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", username, password);
+            connection = java.sql.DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password);
             System.out.println("MySQL connected!");
         } catch (java.sql.SQLException e) {
             System.err.println(e.getMessage());
@@ -43,9 +43,6 @@ public class MySQL {
         }
     }
 
-    public String updateGameState(String gameID) {
-        return null; // TODO implement
-    }
 
     // Getter Constants
     public Connection getConnection() {

@@ -6,6 +6,7 @@ import de.MCmoderSD.main.Config;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.security.SecureRandom;
 
 @SuppressWarnings("unused")
 public class Calculate {
@@ -119,5 +120,22 @@ public class Calculate {
         result[2] = rest.toString();
 
         return result;
+    }
+
+    // GameID Generator
+    public static String generateRandomID() {
+        final String characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+        final int length = 10;
+
+        SecureRandom random = new SecureRandom();
+        StringBuilder idBuilder = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(characters.length());
+            char randomChar = characters.charAt(randomIndex);
+            idBuilder.append(randomChar);
+        }
+
+        return idBuilder.toString();
     }
 }

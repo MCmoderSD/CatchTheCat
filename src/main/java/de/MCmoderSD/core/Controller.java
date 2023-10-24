@@ -7,13 +7,15 @@ import de.MCmoderSD.utilities.Calculate;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
+import java.util.Objects;
+import java.util.Scanner;
 
 public class Controller {
     // Associations
     private final Config config;
     private final Data data;
     private final UI ui;
+    private String encodedData;
 
     // Constructor
     public Controller(Config config) {
@@ -24,6 +26,20 @@ public class Controller {
         config.setData(data);
 
         ui = new UI(config);
+
+        // Debug
+        new Thread(() -> {
+            while (true) {
+                Scanner scanner = new Scanner(System.in);
+                String input = scanner.nextLine();
+                if (Objects.equals(input, "encode")) {
+                    encodedData = Calculate.encodeData(data, config);
+                    System.out.println(encodedData);
+                    data.decodeData(encodedData);
+                    System.out.println(Calculate.generateRandomID());
+                }
+            }
+        }).start();
     }
 
     // Methods
@@ -133,6 +149,7 @@ public class Controller {
                 ui.appendLog(config.getCatcherIsOnMove());
                 ui.setButton(point, data.getCat()); // Update UI
                 data.setCat(point); // Update data
+                data.nextMove(); // Next move
             }
             checkForWinner(); // Check if somebody won
         }
@@ -148,6 +165,7 @@ public class Controller {
             ui.setButton(point); // Update UI
             ui.appendLog(config.getCatIsOnMove());
             data.setObstacle(point); // Update data
+            data.nextMove(); // Next move
         }
 
         checkForWinner(); // Check if somebody won

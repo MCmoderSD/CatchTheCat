@@ -58,8 +58,8 @@ public class Config {
         JsonReader jsonReader = new JsonReader();
         JsonNode database = jsonReader.read("/config/database.json");
 
-        mySQL = null;
-        //mySQL = new MySQL(database.get("host").asText(), database.get("port").asInt(), database.get("database").asText(), database.get("username").asText(), database.get("password").asText());
+        mySQL = new MySQL(database.get("host").asText(), database.get("port").asInt(), database.get("database").asText(), database.get("user").asText(), database.get("password").asText());
+        mySQL.connect();
 
         // Constants
         JsonNode config = jsonReader.read("/config/default.json");
@@ -69,7 +69,7 @@ public class Config {
         imageReader = new ImageReader();
 
         String[] databaseArgs = null;
-        if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.updateGameState(gameID));
+        //if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.updateGameState(gameID));
 
         if (databaseArgs == null) {
             fieldSize = config.get("fieldSize").asInt();

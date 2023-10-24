@@ -22,13 +22,15 @@ public class Data {
         obstacles = new Point[config.getTries()];
     }
 
-    private void decodeData(String encodedData) {
+    public void decodeData(String encodedData) {
         String[] parts = encodedData.split(";");
 
         isCatOnMove = Objects.equals(parts[2], "1");
+        System.out.println(isCatOnMove);
 
         String[] catCords = parts[3].split(":");
         setCat(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
+        System.out.println(catPosition.x + ":" + catPosition.y);
 
         int obstaclesPlaced = parts.length-4;
 
@@ -36,6 +38,7 @@ public class Data {
             String[] obstacleCords = parts[4+i].split(":");
             int x = Integer.parseInt(obstacleCords[0]);
             int y = Integer.parseInt(obstacleCords[1]);
+            System.out.println(x + ":" + y);
             obstacles[0] = new Point(x, y);
         }
     }
@@ -58,7 +61,6 @@ public class Data {
     public void setCat(Point catPosition) {
         if (this.catPosition == catPosition) return;
         this.catPosition.setLocation(catPosition);
-        isCatOnMove = !isCatOnMove; // Switch turns
     }
 
     public void setObstacle(Point obstacle) {
@@ -68,6 +70,9 @@ public class Data {
                 break;
             }
         }
-        isCatOnMove = !isCatOnMove; // Switch turns
+    }
+
+    public void nextMove() {
+        isCatOnMove = !isCatOnMove;
     }
 }
