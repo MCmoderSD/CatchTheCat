@@ -1,5 +1,6 @@
 package de.MCmoderSD.data;
 
+import de.MCmoderSD.core.Controller;
 import de.MCmoderSD.main.Config;
 import de.MCmoderSD.utilities.Calculate;
 import de.MCmoderSD.utilities.MySQL;
@@ -9,29 +10,41 @@ import java.util.Objects;
 
 public class Data {
 
+    // Associations
+    private final Controller controller;
+    private final Config config;
+
     // Variables
     private final Point[] obstacles;
     private final Cat catPosition;
-    private final Config config;
     private boolean isCatOnMove;
 
     // Constructor
-    public Data(Config config) {
-        config.setData(this);
+    public Data(Controller controller, Config config) {
+        this.controller = controller;
         this.config = config;
+        config.setData(this);
 
         // Initialize variables
         isCatOnMove = true;
         catPosition = new Cat(config);
         obstacles = new Point[config.getTries()];
 
-
+        // Update Loop
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                getEncodedData();
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+        }).start();
     }
 
     public void updateEncodedData() {
         MySQL mySQL = config.getMySQL();
-        String encodedData = Calculate.encodeData(this, config);
         if (!mySQL.isConnected()) return;
+        String encodedData = Calculate.encodeData(this, config);
         mySQL.updateEncodedData(encodedData);
     }
 
@@ -39,7 +52,8 @@ public class Data {
         MySQL mySQL = config.getMySQL();
         if (!mySQL.isConnected()) return;
         String encodedData = mySQL.getEncodedData();
-        if (encodedData == null) return;
+        String oldEncodedData = Calculate.encodeData(this, config);
+        if (encodedData == null || Objects.equals(encodedData, oldEncodedData)) return;
         decodeData(encodedData);
     }
 
@@ -59,6 +73,7 @@ public class Data {
             int y = Integer.parseInt(obstacleCords[1]);
             obstacles[0] = new Point(x, y);
         }
+        controller.updateGameState();
     }
 
 
@@ -93,6 +108,5 @@ public class Data {
     public void nextMove() {
         isCatOnMove = !isCatOnMove;
         updateEncodedData();
-        getEncodedData();
     }
 }

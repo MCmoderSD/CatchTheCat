@@ -10,8 +10,6 @@ import java.awt.event.KeyEvent;
 import java.util.Objects;
 import java.util.Scanner;
 
-import static java.lang.Thread.sleep;
-
 public class Controller {
     // Associations
     private final Config config;
@@ -24,22 +22,9 @@ public class Controller {
         this.config = config;
         config.setController(this);
 
-        data = new Data(config);
+        data = new Data(this, config);
         config.setData(data);
 
-        new Thread(() -> {
-            while (true) {
-                if (config.getMySQL().isConnected()) {
-                    try {
-                        sleep(1000);
-                    } catch (InterruptedException e) {
-                        System.err.println(e.getMessage());
-                    }
-                    data.getEncodedData();
-                    updateGameState();
-                }
-            }
-        }).start();
         ui = new UI(config);
 
         // Debug
@@ -114,9 +99,15 @@ public class Controller {
         }
     }
 
-    private void updateGameState() {
+    public void updateGameState() {
         ui.setCat(data.getCat()); // Update UI
         for (Point obstacle : data.getObstacles()) if (obstacle != null) ui.setObstacle(obstacle); // Update UI
+
+        if (data.isCatOnMove()) ui.appendLog(config.getCatIsOnMove());
+        else ui.appendLog(config.getCatcherIsOnMove());
+
+        checkForWinner();
+        ui.updateTries(Calculate.calculateTriesLeft(data, config));
     }
 
     // Public Methods
@@ -168,10 +159,8 @@ public class Controller {
             else {
                 data.setCat(point); // Update data
                 data.nextMove(); // Next move
-                ui.appendLog(config.getCatcherIsOnMove());
                 updateGameState();
             }
-            checkForWinner(); // Check if somebody won
         }
     }
 
@@ -184,12 +173,8 @@ public class Controller {
         else {
             data.setObstacle(point); // Update data
             data.nextMove(); // Next move
-            ui.appendLog(config.getCatIsOnMove());
             updateGameState();
         }
-
-        checkForWinner(); // Check if somebody won
-        ui.updateTries(Calculate.calculateTriesLeft(data, config)); // Update tries
         }
     }
 
