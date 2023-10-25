@@ -32,11 +32,13 @@ public class Data {
 
         // Update Loop
         new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                getEncodedData();
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                    getEncodedData();
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
             }
         }).start();
     }

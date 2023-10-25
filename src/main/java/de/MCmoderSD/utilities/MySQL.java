@@ -75,6 +75,7 @@ public class MySQL {
             System.err.println(e.getMessage());
         }
 
+        System.out.println("Data Pulled");
         return encodedData;
     }
 
@@ -101,8 +102,8 @@ public class MySQL {
                 insertStatement.executeUpdate();
                 insertStatement.close();
 
-                System.out.println("New row added for GameID " + gameID);
-            } else System.out.println("Encoded Data for GameID " + gameID + " updated successfully.");
+                System.out.println("New Game created" + gameID);
+            } else System.out.println("Data Pushed");
 
         } catch (SQLException e) {
             System.err.println(e.getMessage());
