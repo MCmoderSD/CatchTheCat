@@ -75,7 +75,7 @@ public class MySQL {
             System.err.println(e.getMessage());
         }
 
-        System.out.println("Data Pulled");
+        //System.out.println("Data Pulled");
         return encodedData;
     }
 

@@ -68,15 +68,14 @@ public class Data {
         String[] catCords = parts[3].split(":");
         setCat(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
 
-        int obstaclesPlaced = parts.length-3;
-
-        for (int i = 0; i < obstaclesPlaced; i++) {
+        for (int i = 0; i < parts.length; i++) {
             String[] obstacleCords = parts[4+i].split(":");
             int x = Integer.parseInt(obstacleCords[0]);
             int y = Integer.parseInt(obstacleCords[1]);
-            obstacles[0] = new Point(x, y);
+            obstacles[i] = new Point(x, y);
         }
         controller.updateGameState();
+        System.out.println("Decoded and Updated");
     }
 
 
