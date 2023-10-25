@@ -186,6 +186,6 @@ public class Controller {
         data.updateEncodedData();
 
         ui.appendLog(config.getRoomID() + gameID);
-        ui.hideHostButton();
+        ui.hideMultiplayerComponents();
     }
 }

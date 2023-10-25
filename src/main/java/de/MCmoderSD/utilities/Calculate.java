@@ -2,11 +2,14 @@ package de.MCmoderSD.utilities;
 
 import de.MCmoderSD.data.Data;
 import de.MCmoderSD.main.Config;
+import de.MCmoderSD.main.Main;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 @SuppressWarnings("unused")
 public class Calculate {
@@ -137,5 +140,30 @@ public class Calculate {
         }
 
         return idBuilder.toString();
+    }
+
+    public static void restartWithArguments(String[] args) {
+        // TODO FIX AND MAKE IT WORK
+        // Get the Java executable command and the current classpath
+        String javaCommand = System.getProperty("java.home") + "/bin/java";
+        String classpath = System.getProperty("java.class.path");
+
+        try {
+            // Create a process builder to start a new JVM process
+            ProcessBuilder processBuilder = new ProcessBuilder(javaCommand, "-cp", classpath, Main.class.getName());
+
+            // Add the new arguments
+            processBuilder.command().addAll(Arrays.asList(args));
+
+            // Start the new process
+            Process process = processBuilder.start();
+
+            // Wait for the new process to finish
+            int exitCode = process.waitFor();
+
+            System.out.println("New program started with exit code: " + exitCode);
+        } catch (IOException | InterruptedException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

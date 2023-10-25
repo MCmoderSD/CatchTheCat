@@ -8,16 +8,21 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 
 public class UI extends JFrame {
     // Associations
     private final Controller controller;
     private final Config config;
-    // Variables
+    // Attributes
     private final JButton[][] buttons;
-    private final JButton hostButton;
+    private final JButton hostButton, joinButton;
+    private final JTextField gameIDTextField;
     private final JTextArea infoArea;
     private final JLabel triesLabel;
+
+    // Variables
+    private String tempMessage;
 
     // Constructor
     public UI(Config config) {
@@ -109,15 +114,6 @@ public class UI extends JFrame {
             menuPanel.add(directionButtons[i]);
         }
 
-        // Host Button
-        hostButton = new JButton();
-        hostButton.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - menuButtonSize, 3 * menuButtonSize, menuButtonSize);
-        hostButton.setText(config.getHost());
-        hostButton.setFont(defaultFont);
-        hostButton.addActionListener(e -> controller.hostGame());
-        if (config.getGameID() != null) hideHostButton();
-        menuPanel.add(hostButton);
-
         // Create button panel
         JPanel buttonPanel = new JPanel() {
             @Override
@@ -155,6 +151,33 @@ public class UI extends JFrame {
                 buttonPanel.add(buttons[i][j]); // Add button to panel
             }
         }
+
+
+        // Multiplayer Components
+
+        // Host Button
+        hostButton = new JButton();
+        hostButton.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - menuButtonSize, 3 * menuButtonSize, menuButtonSize);
+        hostButton.setText(config.getHost());
+        hostButton.setFont(defaultFont);
+        hostButton.addActionListener(e -> controller.hostGame());
+        if (config.getGameID() != null) hideMultiplayerComponents();
+        menuPanel.add(hostButton);
+
+        // Game ID Text Field
+        gameIDTextField = new JTextField();
+        gameIDTextField.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - 3 * menuButtonSize, 3 * menuButtonSize, menuButtonSize);
+        gameIDTextField.setFont(defaultFont);
+        menuPanel.add(gameIDTextField);
+
+        // Join Button
+        joinButton = new JButton();
+        joinButton.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - 2 * menuButtonSize, 3 * menuButtonSize, menuButtonSize);
+        joinButton.setText(config.getJoin());
+        joinButton.setFont(defaultFont);
+        joinButton.addActionListener(e -> Calculate.restartWithArguments(new String[] {config.getLanguage(), gameIDTextField.getText()}));
+        menuPanel.add(joinButton);
+
 
         // Key listener
         addKeyListener(new KeyAdapter() {
@@ -200,6 +223,8 @@ public class UI extends JFrame {
 
     // Append to log
     public void appendLog(String message) {
+        if (Objects.equals(tempMessage, message)) return;
+        tempMessage = message;
         infoArea.append("\n" + message);
         infoArea.setCaretPosition(infoArea.getDocument().getLength());
     }
@@ -210,7 +235,9 @@ public class UI extends JFrame {
     }
 
     // Hide Host Button
-    public void hideHostButton() {
+    public void hideMultiplayerComponents() {
         hostButton.setVisible(false);
+        gameIDTextField.setVisible(false);
+        joinButton.setVisible(false);
     }
 }

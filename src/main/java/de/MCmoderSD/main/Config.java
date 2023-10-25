@@ -43,6 +43,7 @@ public class Config {
     private final String catcherIsOnMove;
     private final String[] directions;
     private final String host;
+    private final String join;
     private final String roomID;
 
     // Constructor
@@ -114,6 +115,7 @@ public class Config {
         catIsOnMove = languageSet.get("catIsOnMove").asText();
         catcherIsOnMove = languageSet.get("catcherIsOnMove").asText();
         host = languageSet.get("host").asText();
+        join = languageSet.get("join").asText();
         roomID = languageSet.get("roomID").asText();
 
         dimension = new Dimension(width, height);
@@ -235,6 +237,10 @@ public class Config {
 
     public String getHost() {
         return host;
+    }
+
+    public String getJoin() {
+        return join;
     }
 
     public String getRoomID() {
