@@ -35,7 +35,7 @@ public class Data {
             while (true) {
                 try {
                     //noinspection BusyWait
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                     getEncodedData();
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
@@ -68,7 +68,7 @@ public class Data {
         String[] catCords = parts[3].split(":");
         setCat(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
 
-        for (int i = 0; i < parts.length; i++) {
+        for (int i = 0; i < parts.length - 4; i++) {
             String[] obstacleCords = parts[4+i].split(":");
             int x = Integer.parseInt(obstacleCords[0]);
             int y = Integer.parseInt(obstacleCords[1]);
