@@ -47,7 +47,6 @@ public class Config {
     private final String host;
     private final String join;
     private final String roomID;
-    private final String join;
 
     // Constructor
     public Config(String[] args) {
@@ -120,7 +119,6 @@ public class Config {
         host = languageSet.get("host").asText();
         join = languageSet.get("join").asText();
         roomID = languageSet.get("roomID").asText();
-        join = languageSet.get("join").asText();
 
         dimension = new Dimension(width, height);
     }
@@ -255,9 +253,5 @@ public class Config {
 
     public String getRoomID() {
         return roomID;
-    }
-
-    public String getJoin() {
-        return join;
     }
 }

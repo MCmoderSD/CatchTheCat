@@ -7,10 +7,8 @@ import de.MCmoderSD.main.Main;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
