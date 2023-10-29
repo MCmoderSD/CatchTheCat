@@ -14,15 +14,16 @@ public class UI extends JFrame {
     // Associations
     private final Controller controller;
     private final Config config;
+
     // Attributes
     private final JButton[][] buttons;
     private final JButton hostButton, joinButton;
-    private final JTextField gameIDTextField;
+    private final JTextField roomIDField;
     private final JTextArea infoArea;
     private final JLabel triesLabel;
 
     // Variables
-    private String tempMessage;
+    private String tempLog;
 
     // Constructor
     public UI(Config config) {
@@ -34,7 +35,7 @@ public class UI extends JFrame {
         // Associations
         this.config = config;
         this.controller = config.getController();
-
+        config.setUI(this);
 
         // Calculate dimensions
         int max = Math.max(config.getWidth(), config.getHeight());
@@ -114,6 +115,31 @@ public class UI extends JFrame {
             menuPanel.add(directionButtons[i]);
         }
 
+        // Room ID Field
+        roomIDField = new JTextField();
+        roomIDField.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - 3 * menuButtonSize, 3 * menuButtonSize, menuButtonSize);
+        roomIDField.setFont(defaultFont);
+        if (config.getGameID() != null) hideMultiplayerComponents();
+        menuPanel.add(roomIDField);
+
+        // Host Button
+        hostButton = new JButton();
+        hostButton.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - menuButtonSize, 3 * menuButtonSize, menuButtonSize);
+        hostButton.setText(config.getHost());
+        hostButton.setFont(defaultFont);
+        hostButton.addActionListener(e -> controller.hostGame());
+        if (config.getGameID() != null) hideMultiplayerComponents();
+        menuPanel.add(hostButton);
+
+        // Join Button
+        joinButton = new JButton();
+        joinButton.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - 2 * menuButtonSize, 3 * menuButtonSize, menuButtonSize);
+        joinButton.setText(config.getJoin());
+        joinButton.setFont(defaultFont);
+        joinButton.addActionListener(e -> controller.joinGame());
+        if (config.getGameID() != null) hideMultiplayerComponents();
+        menuPanel.add(joinButton);
+
         // Create button panel
         JPanel buttonPanel = new JPanel() {
             @Override
@@ -152,33 +178,6 @@ public class UI extends JFrame {
             }
         }
 
-
-        // Multiplayer Components
-
-        // Host Button
-        hostButton = new JButton();
-        hostButton.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - menuButtonSize, 3 * menuButtonSize, menuButtonSize);
-        hostButton.setText(config.getHost());
-        hostButton.setFont(defaultFont);
-        hostButton.addActionListener(e -> controller.hostGame());
-        if (config.getGameID() != null) hideMultiplayerComponents();
-        menuPanel.add(hostButton);
-
-        // Game ID Text Field
-        gameIDTextField = new JTextField();
-        gameIDTextField.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - 3 * menuButtonSize, 3 * menuButtonSize, menuButtonSize);
-        gameIDTextField.setFont(defaultFont);
-        menuPanel.add(gameIDTextField);
-
-        // Join Button
-        joinButton = new JButton();
-        joinButton.setBounds((menuPanel.getWidth() - 3 * menuButtonSize) / 2 - padding, menuPanel.getHeight() - 2 * menuButtonSize, 3 * menuButtonSize, menuButtonSize);
-        joinButton.setText(config.getJoin());
-        joinButton.setFont(defaultFont);
-        joinButton.addActionListener(e -> Calculate.restartWithArguments(new String[] {config.getLanguage(), gameIDTextField.getText()}));
-        menuPanel.add(joinButton);
-
-
         // Key listener
         addKeyListener(new KeyAdapter() {
             @Override
@@ -213,6 +212,8 @@ public class UI extends JFrame {
 
     // Show message dialog
     public void showMessage(String message) {
+        if (Objects.equals(message, tempLog)) return;
+        tempLog = message;
         JOptionPane.showMessageDialog(this, message);
     }
 
@@ -223,8 +224,6 @@ public class UI extends JFrame {
 
     // Append to log
     public void appendLog(String message) {
-        if (Objects.equals(tempMessage, message)) return;
-        tempMessage = message;
         infoArea.append("\n" + message);
         infoArea.setCaretPosition(infoArea.getDocument().getLength());
     }
@@ -236,8 +235,13 @@ public class UI extends JFrame {
 
     // Hide Host Button
     public void hideMultiplayerComponents() {
-        hostButton.setVisible(false);
-        gameIDTextField.setVisible(false);
-        joinButton.setVisible(false);
+        if (roomIDField != null) roomIDField.setVisible(false);
+        if (hostButton != null) hostButton.setVisible(false);
+        if (joinButton != null) joinButton.setVisible(false);
+    }
+
+    // Getter
+    public String getRoomID() {
+        return roomIDField.getText();
     }
 }

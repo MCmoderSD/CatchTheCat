@@ -56,7 +56,7 @@ public class Data {
         if (!mySQL.isConnected()) return;
         String encodedData = mySQL.getEncodedData();
         String oldEncodedData = Calculate.encodeData(this, config);
-        if (encodedData == null || Objects.equals(encodedData, oldEncodedData)) return;
+        if (config.getUI() == null || encodedData == null || Objects.equals(encodedData, oldEncodedData)) return;
         decodeData(encodedData);
     }
 
@@ -68,11 +68,13 @@ public class Data {
         String[] catCords = parts[3].split(":");
         setCat(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
 
-        for (int i = 0; i < parts.length - 4; i++) {
-            String[] obstacleCords = parts[4+i].split(":");
-            int x = Integer.parseInt(obstacleCords[0]);
-            int y = Integer.parseInt(obstacleCords[1]);
-            obstacles[i] = new Point(x, y);
+        if (parts.length > 4) {
+            for (int i = 0; i < parts.length - 4; i++) {
+                String[] obstacleCords = parts[4 + i].split(":");
+                int x = Integer.parseInt(obstacleCords[0]);
+                int y = Integer.parseInt(obstacleCords[1]);
+                obstacles[i] = new Point(x, y);
+            }
         }
         controller.updateGameState();
         System.out.println("Decoded and Updated");

@@ -102,7 +102,7 @@ public class MySQL {
                 insertStatement.executeUpdate();
                 insertStatement.close();
 
-                System.out.println("New Game created" + gameID);
+                System.out.println("New Game created " + gameID);
             } else System.out.println("Data Pushed");
 
         } catch (SQLException e) {

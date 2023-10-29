@@ -14,6 +14,6 @@
   "left": "Sinistra",
   "right": "Destra",
   "host": "Host",
-  "join": "Join",
-  "roomID": "Room ID: "
+  "roomID": "Room ID: ",
+  "join": "Join"
 }

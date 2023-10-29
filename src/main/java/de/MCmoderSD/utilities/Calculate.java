@@ -7,8 +7,10 @@ import de.MCmoderSD.main.Main;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
@@ -142,8 +144,8 @@ public class Calculate {
         return idBuilder.toString();
     }
 
+    // Restart Application
     public static void restartWithArguments(String[] args) {
-        // TODO FIX AND MAKE IT WORK
         // Get the Java executable command and the current classpath
         String javaCommand = System.getProperty("java.home") + "/bin/java";
         String classpath = System.getProperty("java.class.path");

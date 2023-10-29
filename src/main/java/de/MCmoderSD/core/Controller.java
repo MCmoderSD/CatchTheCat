@@ -100,6 +100,7 @@ public class Controller {
     }
 
     public void updateGameState() {
+        if (ui == null) return;
         ui.setCat(data.getCat()); // Update UI
         for (Point obstacle : data.getObstacles()) if (obstacle != null) ui.setObstacle(obstacle); // Update UI
 
@@ -187,5 +188,10 @@ public class Controller {
 
         ui.appendLog(config.getRoomID() + gameID);
         ui.hideMultiplayerComponents();
+    }
+
+    // Join Game
+    public void joinGame() {
+        Calculate.restartWithArguments(new String[] {config.getLanguage(), config.getGameID()});
     }
 }

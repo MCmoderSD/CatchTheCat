@@ -14,6 +14,6 @@
   "left": "Links",
   "right": "Rechts",
   "host": "Host",
-  "join": "Join",
-  "roomID": "Raum Code: "
+  "roomID": "Raum Code: ",
+  "join": "Join"
 }

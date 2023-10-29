@@ -1,6 +1,7 @@
 package de.MCmoderSD.main;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.MCmoderSD.UI.UI;
 import de.MCmoderSD.core.Controller;
 import de.MCmoderSD.data.Data;
 import de.MCmoderSD.utilities.Calculate;
@@ -17,6 +18,7 @@ public class Config {
     private final MySQL mySQL;
     private Controller controller;
     private Data data;
+    private UI ui;
 
     // Constants
     private final String[] args;
@@ -45,6 +47,7 @@ public class Config {
     private final String host;
     private final String join;
     private final String roomID;
+    private final String join;
 
     // Constructor
     public Config(String[] args) {
@@ -117,6 +120,7 @@ public class Config {
         host = languageSet.get("host").asText();
         join = languageSet.get("join").asText();
         roomID = languageSet.get("roomID").asText();
+        join = languageSet.get("join").asText();
 
         dimension = new Dimension(width, height);
     }
@@ -130,6 +134,9 @@ public class Config {
         this.data = data;
     }
 
+    public void setUI(UI ui) {
+        this.ui = ui;
+    }
 
     // Getter Associations
     public ImageReader getImageReader() {
@@ -148,6 +155,9 @@ public class Config {
         return data;
     }
 
+    public UI getUI() {
+        return ui;
+    }
 
     // Getter Constants
     public String[] getArgs() {
@@ -245,5 +255,9 @@ public class Config {
 
     public String getRoomID() {
         return roomID;
+    }
+
+    public String getJoin() {
+        return join;
     }
 }
