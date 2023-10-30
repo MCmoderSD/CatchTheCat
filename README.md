@@ -7,6 +7,14 @@ The game is written in Java 8 and uses the Swing library for the GUI. <Br>
 Player 1 is plays as the cat and can move up, down, left and right. <Br>
 Player 2 is plays as the catcher and can place barricades to trap and catch the cat. <Br>
 
+
+## Multiplayer
+You can play since version 1.3.0 online multiplayer <Br>
+One player hosts a game and the other player joins it. <Br>
+The game is only mirrored to the client, so you still can play as cat and catcher on the host or client. <Br>
+
+If it doesn't work, the SQL server needs to access the port 3306. <Br>
+
 ## How to play
 
 ### Player 1 (Cat)
@@ -38,7 +46,7 @@ The default is English, but you can change it with start arguments. <Br>
 `java -jar CatchTheCat.jar en` for English <Br>
 `java -jar CatchTheCat.jar it` for Italian <Br>
 
-If you wan't to contribute and translate the game into your language, please make a pull request. <Br>
+If you want to contribute and translate the game into your language, please make a pull request. <Br>
 
 ## Contributors
 - [RedsmileTV](https://github.com/Redsmiletv) (Italian translation)

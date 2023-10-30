@@ -3,19 +3,19 @@ package de.MCmoderSD.core;
 import de.MCmoderSD.UI.UI;
 import de.MCmoderSD.data.Data;
 import de.MCmoderSD.main.Config;
+import de.MCmoderSD.main.Main;
 import de.MCmoderSD.utilities.Calculate;
+import de.MCmoderSD.utilities.MySQL;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.Objects;
-import java.util.Scanner;
 
 public class Controller {
+
     // Associations
     private final Config config;
     private final Data data;
     private final UI ui;
-    private String encodedData;
 
     // Constructor
     public Controller(Config config) {
@@ -26,20 +26,6 @@ public class Controller {
         config.setData(data);
 
         ui = new UI(config);
-
-        // Debug
-        new Thread(() -> {
-            while (true) {
-                Scanner scanner = new Scanner(System.in);
-                String input = scanner.nextLine();
-                if (Objects.equals(input, "encode")) {
-                    encodedData = Calculate.encodeData(data, config);
-                    System.out.println(encodedData);
-                    data.decodeData(encodedData);
-                    System.out.println(Calculate.generateRandomID());
-                }
-            }
-        }).start();
     }
 
     // Methods
@@ -99,19 +85,25 @@ public class Controller {
         }
     }
 
-    public void updateGameState() {
-        if (ui == null) return;
-        ui.setCat(data.getCat()); // Update UI
-        for (Point obstacle : data.getObstacles()) if (obstacle != null) ui.setObstacle(obstacle); // Update UI
+    // Public Methods
 
+
+    // Update UI
+    public void updateGameState() {
+        if (ui == null) return; // UI is not initialized
+
+        // Update UI
+        ui.setCat(data.getCat());
+        for (Point obstacle : data.getObstacles()) if (obstacle != null) ui.setObstacle(obstacle);
+
+        // Update Log
         if (data.isCatOnMove()) ui.appendLog(config.getCatIsOnMove());
         else ui.appendLog(config.getCatcherIsOnMove());
 
+        // Update Game State
         checkForWinner();
         ui.updateTries(Calculate.calculateTriesLeft(data, config));
     }
-
-    // Public Methods
 
     // Convert Key to Point and call catPlaysMove(Point)
     public void catPlaysMove(int key) {
@@ -181,17 +173,24 @@ public class Controller {
 
     // Host Game
     public void hostGame() {
+
+        // Create new Game on MySQL Server
         String gameID = Calculate.generateRandomID();
-        config.getMySQL().setGameID(gameID);
-        config.getMySQL().connect();
+        MySQL mySQL = config.getMySQL();
+        mySQL.setGameID(gameID);
+        mySQL.connect();
+
+        // Update encoded data
         data.updateEncodedData();
 
+        // Update UI
         ui.appendLog(config.getRoomID() + gameID);
         ui.hideMultiplayerComponents();
     }
 
     // Join Game
     public void joinGame() {
-        Calculate.restartWithArguments(new String[] {config.getLanguage(), config.getGameID()});
+        ui.hideOldFrame(); // Hide old frame
+        Main.main(new String[] {config.getLanguage(), ui.getRoomID()}); // Start new game
     }
 }

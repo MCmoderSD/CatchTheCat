@@ -11,17 +11,20 @@ import java.util.HashMap;
 
 @SuppressWarnings("unused")
 public class JsonReader {
+
+    // Attributes
     private final ObjectMapper mapper;
     private final HashMap<String, JsonNode> jsonCache;
     private boolean isAbsolute;
 
-    // Constructors
+    // Constructor without isAbsolute
     public JsonReader() {
         isAbsolute = false;
         mapper = new ObjectMapper();
         jsonCache = new HashMap<>();
     }
 
+    // Constructor with isAbsolute
     public JsonReader(boolean isAbsolute) {
         this.isAbsolute = isAbsolute;
         mapper = new ObjectMapper();

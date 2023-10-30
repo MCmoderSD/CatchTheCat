@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.util.Objects;
 
 public class UI extends JFrame {
+
     // Associations
     private final Controller controller;
     private final Config config;
@@ -212,8 +213,6 @@ public class UI extends JFrame {
 
     // Show message dialog
     public void showMessage(String message) {
-        if (Objects.equals(message, tempLog)) return;
-        tempLog = message;
         JOptionPane.showMessageDialog(this, message);
     }
 
@@ -224,6 +223,8 @@ public class UI extends JFrame {
 
     // Append to log
     public void appendLog(String message) {
+        if (Objects.equals(message, tempLog)) return;
+        else tempLog = message;
         infoArea.append("\n" + message);
         infoArea.setCaretPosition(infoArea.getDocument().getLength());
     }
@@ -238,6 +239,10 @@ public class UI extends JFrame {
         if (roomIDField != null) roomIDField.setVisible(false);
         if (hostButton != null) hostButton.setVisible(false);
         if (joinButton != null) joinButton.setVisible(false);
+    }
+
+    public void hideOldFrame() {
+        setVisible(false);
     }
 
     // Getter

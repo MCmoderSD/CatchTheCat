@@ -10,19 +10,24 @@ import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class ImageReader {
+
+    // Attributes
     private final HashMap<String, BufferedImage> bufferedImageCache;
     private boolean isAbsolute;
 
+    // Constructor without isAbsolute
     public ImageReader() {
         isAbsolute = false;
         bufferedImageCache = new HashMap<>();
     }
 
+    // Constructor with isAbsolute
     public ImageReader(boolean isAbsolute) {
         this.isAbsolute = isAbsolute;
         bufferedImageCache = new HashMap<>();
     }
 
+    // Read image file and return BufferedImage
     public BufferedImage read(String resource) {
         if (bufferedImageCache.containsKey(resource)) return bufferedImageCache.get(resource); // Checks the cache for the image
 

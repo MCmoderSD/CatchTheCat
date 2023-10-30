@@ -7,15 +7,20 @@ import java.sql.SQLException;
 
 @SuppressWarnings("unused")
 public class MySQL {
+
+    // Constants
     private final String host;
     private final int port;
     private final String database;
     private final String username;
     private final String password;
     private final String table;
+
+    // Attributes
     private Connection connection;
     private String gameID;
 
+    // Constructors
     public MySQL(String host, int port, String database, String username, String password, String table, String gameID) {
         this.host = host;
         this.port = port;

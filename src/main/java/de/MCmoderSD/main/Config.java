@@ -13,6 +13,7 @@ import java.awt.*;
 
 @SuppressWarnings("unused")
 public class Config {
+
     // Associations
     private final ImageReader imageReader;
     private final MySQL mySQL;
@@ -52,15 +53,20 @@ public class Config {
     public Config(String[] args) {
         this.args = args;
 
+        // Language
         if (args.length == 0) language = "en";
         else language = args[0].toLowerCase();
+
+        // GameID
         if (args.length == 2) gameID = args[1];
         else gameID = null;
 
-        // Read config
+
+        // Read Config
         JsonReader jsonReader = new JsonReader();
         JsonNode database = jsonReader.read("/config/database.json");
 
+        // Initialize MySQL Connection
         mySQL = new MySQL(
 
                 database.get("host").asText(),
@@ -68,7 +74,8 @@ public class Config {
                 database.get("database").asText(),
                 database.get("user").asText(),
                 database.get("password").asText(),
-                database.get("table").asText(), gameID);
+                database.get("table").asText(),
+                gameID);
 
         mySQL.connect();
 
@@ -77,8 +84,10 @@ public class Config {
         width = config.get("width").asInt();
         height = config.get("height").asInt();
         isResizable = config.get("isResizable").asBoolean();
+        dimension = new Dimension(width, height);
         imageReader = new ImageReader();
 
+        // Field Size and Tries
         String[] databaseArgs = null;
         if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.getEncodedData());
 
@@ -119,11 +128,9 @@ public class Config {
         host = languageSet.get("host").asText();
         join = languageSet.get("join").asText();
         roomID = languageSet.get("roomID").asText();
-
-        dimension = new Dimension(width, height);
     }
 
-    // Setter
+    // Setter Associations
     public void setController(Controller controller) {
         this.controller = controller;
     }

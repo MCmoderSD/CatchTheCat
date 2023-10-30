@@ -6,6 +6,7 @@ import java.awt.*;
 import java.util.Random;
 
 public class Cat extends Point {
+
     public Cat(Config config) {
         Random random = new Random();
         int x = random.nextInt(config.getFieldSize());

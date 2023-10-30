@@ -11,7 +11,6 @@ import java.util.Objects;
 public class Data {
 
     // Associations
-    private final Controller controller;
     private final Config config;
 
     // Variables
@@ -20,8 +19,8 @@ public class Data {
     private boolean isCatOnMove;
 
     // Constructor
+    @SuppressWarnings("BusyWait")
     public Data(Controller controller, Config config) {
-        this.controller = controller;
         this.config = config;
         config.setData(this);
 
@@ -34,9 +33,38 @@ public class Data {
         new Thread(() -> {
             while (true) {
                 try {
-                    //noinspection BusyWait
-                    Thread.sleep(100);
-                    getEncodedData();
+                    boolean decodeIsValid;
+                    String oldEncodedData;
+                    String encodedData = null;
+                    MySQL mySQL = config.getMySQL();
+
+                    if (!mySQL.isConnected()) decodeIsValid = false;
+                    else {
+                        encodedData = mySQL.getEncodedData();
+                        oldEncodedData = Calculate.encodeData(this, config);
+                        decodeIsValid = config.getUI() != null && !Objects.equals(encodedData, oldEncodedData);
+                    }
+
+                    // Decode
+                    if (decodeIsValid) {
+                        String[] parts = encodedData.split(";");
+
+                        isCatOnMove = Objects.equals(parts[2], "1");
+
+                        String[] catCords = parts[3].split(":");
+                        setCat(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
+
+                        if (parts.length > 4) {
+                            for (int i = 0; i < parts.length - 4; i++) {
+                                String[] obstacleCords = parts[4 + i].split(":");
+                                int x = Integer.parseInt(obstacleCords[0]);
+                                int y = Integer.parseInt(obstacleCords[1]);
+                                obstacles[i] = new Point(x, y);
+                            }
+                        }
+                        controller.updateGameState();
+                        System.out.println("Decoded and Updated");
+                    } else Thread.sleep(100);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
@@ -44,40 +72,12 @@ public class Data {
         }).start();
     }
 
+    // Methods
     public void updateEncodedData() {
         MySQL mySQL = config.getMySQL();
         if (!mySQL.isConnected()) return;
         String encodedData = Calculate.encodeData(this, config);
         mySQL.updateEncodedData(encodedData);
-    }
-
-    public void getEncodedData() {
-        MySQL mySQL = config.getMySQL();
-        if (!mySQL.isConnected()) return;
-        String encodedData = mySQL.getEncodedData();
-        String oldEncodedData = Calculate.encodeData(this, config);
-        if (config.getUI() == null || encodedData == null || Objects.equals(encodedData, oldEncodedData)) return;
-        decodeData(encodedData);
-    }
-
-    public void decodeData(String encodedData) {
-        String[] parts = encodedData.split(";");
-
-        isCatOnMove = Objects.equals(parts[2], "1");
-
-        String[] catCords = parts[3].split(":");
-        setCat(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
-
-        if (parts.length > 4) {
-            for (int i = 0; i < parts.length - 4; i++) {
-                String[] obstacleCords = parts[4 + i].split(":");
-                int x = Integer.parseInt(obstacleCords[0]);
-                int y = Integer.parseInt(obstacleCords[1]);
-                obstacles[i] = new Point(x, y);
-            }
-        }
-        controller.updateGameState();
-        System.out.println("Decoded and Updated");
     }
 
 
@@ -96,12 +96,13 @@ public class Data {
 
     // Setter
     public void setCat(Point catPosition) {
-        if (this.catPosition == catPosition) return;
-        this.catPosition.setLocation(catPosition);
+        if (this.catPosition == catPosition) return; // No change
+        this.catPosition.setLocation(catPosition); // Update
     }
 
     public void setObstacle(Point obstacle) {
         for (int i = 0; i < obstacles.length; i++) {
+            // Find unused slot
             if (obstacles[i] == null) {
                 obstacles[i] = obstacle;
                 break;
@@ -110,7 +111,7 @@ public class Data {
     }
 
     public void nextMove() {
-        isCatOnMove = !isCatOnMove;
-        updateEncodedData();
+        isCatOnMove = !isCatOnMove; // Switch
+        updateEncodedData(); // Update
     }
 }
