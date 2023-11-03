@@ -2,7 +2,7 @@ package de.MCmoderSD.data;
 
 import de.MCmoderSD.main.Config;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.Random;
 
 public class Cat extends Point {

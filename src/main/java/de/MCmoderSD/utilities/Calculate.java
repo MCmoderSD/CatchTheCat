@@ -3,8 +3,13 @@ package de.MCmoderSD.utilities;
 import de.MCmoderSD.data.Data;
 import de.MCmoderSD.main.Config;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.security.SecureRandom;

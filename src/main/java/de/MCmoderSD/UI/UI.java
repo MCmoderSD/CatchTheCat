@@ -97,8 +97,8 @@ public class UI extends JFrame {
         BufferedImage[] arrows = config.getArrows();
         int centeredButtonPosition = (menuPanel.getWidth() - buttonSize) / 2;
         for (int i = 0; i < arrows.length; i++) {
-            if (config.getImageReader() != null) directionButtonIcons[i] = config.getImageReader().createImageIcon(arrows[i], buttonSize);
-            else directionButtonIcons[i] = config.getImageStreamer().createImageIcon(arrows[i], buttonSize);
+            if (config.getImageReader() != null) directionButtonIcons[i] = config.getImageReader().createImageIcon(arrows[i], menuButtonSize);
+            else directionButtonIcons[i] = config.getImageStreamer().createImageIcon(arrows[i], menuButtonSize);
         }
 
         // Calculate direction button bounds

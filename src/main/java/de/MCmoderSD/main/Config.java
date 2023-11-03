@@ -11,7 +11,6 @@ import de.MCmoderSD.utilities.JsonReader;
 import de.MCmoderSD.utilities.JsonStreamer;
 import de.MCmoderSD.utilities.MySQL;
 
-import javax.swing.ImageIcon;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 

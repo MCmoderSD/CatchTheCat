@@ -5,7 +5,7 @@ import de.MCmoderSD.main.Config;
 import de.MCmoderSD.utilities.Calculate;
 import de.MCmoderSD.utilities.MySQL;
 
-import java.awt.*;
+import java.awt.Point;
 import java.util.Objects;
 
 public class Data {

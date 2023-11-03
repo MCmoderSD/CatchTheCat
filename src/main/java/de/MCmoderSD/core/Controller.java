@@ -7,7 +7,7 @@ import de.MCmoderSD.main.Main;
 import de.MCmoderSD.utilities.Calculate;
 import de.MCmoderSD.utilities.MySQL;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 
 public class Controller {
