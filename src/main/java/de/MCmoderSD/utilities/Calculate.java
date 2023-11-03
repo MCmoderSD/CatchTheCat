@@ -2,6 +2,7 @@ package de.MCmoderSD.utilities;
 
 import de.MCmoderSD.data.Data;
 import de.MCmoderSD.main.Config;
+import de.MCmoderSD.main.Main;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -11,7 +12,7 @@ import java.awt.Rectangle;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.InputStream;
 import java.security.SecureRandom;
 
 @SuppressWarnings("unused")
@@ -146,8 +147,8 @@ public class Calculate {
     }
 
     // File Checker
-    public static boolean doesFileExist(String filePath) {
-        File file = new File(filePath);
-        return file.exists() && file.isFile();
+    public static boolean doesFileExist(String resourcePath) {
+        InputStream inputStream = Main.class.getResourceAsStream(resourcePath);
+        return inputStream != null;
     }
 }
