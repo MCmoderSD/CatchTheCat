@@ -6,6 +6,7 @@ import de.MCmoderSD.main.Config;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.security.SecureRandom;
 
 @SuppressWarnings("unused")
@@ -137,5 +138,11 @@ public class Calculate {
         }
 
         return idBuilder.toString();
+    }
+
+    // File Checker
+    public static boolean doesFileExist(String filePath) {
+        File file = new File(filePath);
+        return file.exists() && file.isFile();
     }
 }

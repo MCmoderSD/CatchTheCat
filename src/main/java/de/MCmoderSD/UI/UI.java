@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 public class UI extends JFrame {
@@ -93,9 +94,12 @@ public class UI extends JFrame {
         int directionButtonHeight = 2 * padding;
 
         //Resize the Images
-        Image[] arrows = config.getArrows();
+        BufferedImage[] arrows = config.getArrows();
         int centeredButtonPosition = (menuPanel.getWidth() - buttonSize) / 2;
-        for (int i = 0; i < arrows.length; i++) directionButtonIcons[i] = new ImageIcon(arrows[i].getScaledInstance(menuButtonSize, menuButtonSize, Image.SCALE_DEFAULT));
+        for (int i = 0; i < arrows.length; i++) {
+            if (config.getImageReader() != null) directionButtonIcons[i] = config.getImageReader().createImageIcon(arrows[i], buttonSize);
+            else directionButtonIcons[i] = config.getImageStreamer().createImageIcon(arrows[i], buttonSize);
+        }
 
         // Calculate direction button bounds
         for (int i = 0; i < 4; i++) directionButtonBounds[i] = new Rectangle();

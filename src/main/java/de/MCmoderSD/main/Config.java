@@ -6,17 +6,22 @@ import de.MCmoderSD.core.Controller;
 import de.MCmoderSD.data.Data;
 import de.MCmoderSD.utilities.Calculate;
 import de.MCmoderSD.utilities.ImageReader;
+import de.MCmoderSD.utilities.ImageStreamer;
 import de.MCmoderSD.utilities.JsonReader;
+import de.MCmoderSD.utilities.JsonStreamer;
 import de.MCmoderSD.utilities.MySQL;
 
-import java.awt.*;
+import javax.swing.ImageIcon;
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 
 @SuppressWarnings("unused")
 public class Config {
 
     // Associations
-    private final ImageReader imageReader;
     private final MySQL mySQL;
+    private final ImageReader imageReader;
+    private final ImageStreamer imageStreamer;
     private Controller controller;
     private Data data;
     private UI ui;
@@ -31,7 +36,7 @@ public class Config {
     private final int fieldSize;
     private final int tries;
     private final boolean isResizable;
-    private final Image[] arrows;
+    private final BufferedImage[] arrows;
 
     // Language
     private final String title;
@@ -48,6 +53,7 @@ public class Config {
     private final String host;
     private final String join;
     private final String roomID;
+
 
     // Constructor
     public Config(String[] args) {
@@ -86,6 +92,7 @@ public class Config {
         isResizable = config.get("isResizable").asBoolean();
         dimension = new Dimension(width, height);
         imageReader = new ImageReader();
+        imageStreamer = null;
 
         // Field Size and Tries
         String[] databaseArgs = null;
@@ -100,7 +107,7 @@ public class Config {
         }
 
         // Arrows
-        arrows = new Image[4];
+        arrows = new BufferedImage[4];
         arrows[0] = imageReader.read(config.get("arrowUp").asText());
         arrows[1] = imageReader.read(config.get("arrowLeft").asText());
         arrows[2] = imageReader.read(config.get("arrowDown").asText());
@@ -108,6 +115,88 @@ public class Config {
 
         // Directions
         JsonNode languageSet = jsonReader.read("/languages/" + language + ".json");
+        directions = new String[4];
+        directions[0] = languageSet.get("up").asText();
+        directions[1] = languageSet.get("left").asText();
+        directions[2] = languageSet.get("down").asText();
+        directions[3] = languageSet.get("right").asText();
+
+        // Messages
+        title = languageSet.get("title").asText();
+        invalidMove = languageSet.get("invalidMove").asText();
+        invalidObstacle = languageSet.get("invalidObstacle").asText();
+        catWon = languageSet.get("catWon").asText();
+        catcherWon = languageSet.get("catcherWon").asText();
+        catIsNotOnMove = languageSet.get("catIsNotOnMove").asText();
+        catcherIsNotOnMove = languageSet.get("catcherIsNotOnMove").asText();
+        triesLeft = languageSet.get("triesLeft").asText();
+        catIsOnMove = languageSet.get("catIsOnMove").asText();
+        catcherIsOnMove = languageSet.get("catcherIsOnMove").asText();
+        host = languageSet.get("host").asText();
+        join = languageSet.get("join").asText();
+        roomID = languageSet.get("roomID").asText();
+    }
+
+    // Constructor asset streaming
+    public Config(String[] args, String url) {
+        this.args = args;
+
+        // Language
+        if (args.length == 0) language = "en";
+        else language = args[0].toLowerCase();
+
+        // GameID
+        if (args.length == 2) gameID = args[1];
+        else gameID = null;
+
+
+        // Read Config
+        JsonStreamer jsonReader = new JsonStreamer();
+        JsonNode database = jsonReader.read("https://raw.githubusercontent.com/MCmoderSD/CatchTheCat/master/src/main/resources/config/database.json");
+
+        // Initialize MySQL Connection
+        mySQL = new MySQL(
+
+                database.get("host").asText(),
+                database.get("port").asInt(),
+                database.get("database").asText(),
+                database.get("user").asText(),
+                database.get("password").asText(),
+                database.get("table").asText(),
+                gameID);
+
+        mySQL.connect();
+
+        // Constants
+        JsonNode config = jsonReader.read(url);
+        width = config.get("width").asInt();
+        height = config.get("height").asInt();
+        isResizable = config.get("isResizable").asBoolean();
+        dimension = new Dimension(width, height);
+        imageStreamer = new ImageStreamer();
+        imageReader = null;
+
+        // Field Size and Tries
+        String[] databaseArgs = null;
+        if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.getEncodedData());
+
+        if (databaseArgs == null) {
+            fieldSize = config.get("fieldSize").asInt();
+            tries = config.get("tries").asInt();
+        } else {
+            fieldSize = Integer.parseInt(databaseArgs[0]);
+            tries = Integer.parseInt(databaseArgs[1]);
+        }
+
+        // Arrows
+        arrows = new BufferedImage[4];
+        arrows[0] = imageStreamer.read(config.get("arrowUp").asText());
+        arrows[1] = imageStreamer.read(config.get("arrowLeft").asText());
+        arrows[2] = imageStreamer.read(config.get("arrowDown").asText());
+        arrows[3] = imageStreamer.read(config.get("arrowRight").asText());
+
+        // Directions
+        JsonNode languageSet = jsonReader.read("https://raw.githubusercontent.com/MCmoderSD/CatchTheCat/master/src/main/resources/languages/" + language + ".json");
         directions = new String[4];
         directions[0] = languageSet.get("up").asText();
         directions[1] = languageSet.get("left").asText();
@@ -144,10 +233,6 @@ public class Config {
     }
 
     // Getter Associations
-    public ImageReader getImageReader() {
-        return imageReader;
-    }
-
     public MySQL getMySQL() {
         return mySQL;
     }
@@ -162,6 +247,14 @@ public class Config {
 
     public UI getUI() {
         return ui;
+    }
+
+    public ImageReader getImageReader() {
+        return imageReader;
+    }
+
+    public ImageStreamer getImageStreamer() {
+        return imageStreamer;
     }
 
     // Getter Constants
@@ -201,7 +294,7 @@ public class Config {
         return isResizable;
     }
 
-    public Image[] getArrows() {
+    public BufferedImage[] getArrows() {
         return arrows;
     }
 
