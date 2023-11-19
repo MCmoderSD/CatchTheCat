@@ -2,8 +2,10 @@ package de.MCmoderSD.data;
 
 import de.MCmoderSD.core.Controller;
 import de.MCmoderSD.main.Config;
+import de.MCmoderSD.objects.Cat;
+import de.MCmoderSD.objects.Obstacle;
 import de.MCmoderSD.utilities.Calculate;
-import de.MCmoderSD.utilities.MySQL;
+import de.MCmoderSD.utilities.database.MySQL;
 
 import java.awt.Point;
 import java.util.Objects;
@@ -12,38 +14,39 @@ public class Data {
 
     // Associations
     private final Config config;
+    private final MySQL mySQL;
 
     // Variables
-    private final Point[] obstacles;
-    private final Cat catPosition;
+    private final Obstacle[] obstacles;
+    private final Cat cat;
     private boolean isCatOnMove;
 
     // Constructor
     @SuppressWarnings("BusyWait")
     public Data(Controller controller, Config config) {
         this.config = config;
-        config.setData(this);
+        this.mySQL = config.getMySQL();
 
         // Initialize variables
         isCatOnMove = true;
-        catPosition = new Cat(config);
-        obstacles = new Point[config.getTries()];
+        cat = new Cat(config);
+        obstacles = new Obstacle[config.getTries()];
 
         // Update Loop
         new Thread(() -> {
             while (true) {
                 try {
+
                     boolean decodeIsValid;
                     String oldEncodedData;
                     String encodedData = null;
-                    MySQL mySQL = config.getMySQL();
 
-                    if (!mySQL.isConnected()) decodeIsValid = false;
-                    else {
-                        encodedData = mySQL.getEncodedData();
+                    // Pull and differentiate between local and online
+                    if (mySQL.isConnected()) {
+                        encodedData = mySQL.pullFromMySQL();
                         oldEncodedData = Calculate.encodeData(this, config);
-                        decodeIsValid = config.getUI() != null && !Objects.equals(encodedData, oldEncodedData);
-                    }
+                        decodeIsValid = !Objects.equals(encodedData, oldEncodedData);
+                    } else decodeIsValid = false;
 
                     // Decode
                     if (decodeIsValid) {
@@ -52,19 +55,19 @@ public class Data {
                         isCatOnMove = Objects.equals(parts[2], "1");
 
                         String[] catCords = parts[3].split(":");
-                        setCat(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
+                        setCatLocation(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
 
                         if (parts.length > 4) {
                             for (int i = 0; i < parts.length - 4; i++) {
                                 String[] obstacleCords = parts[4 + i].split(":");
                                 int x = Integer.parseInt(obstacleCords[0]);
                                 int y = Integer.parseInt(obstacleCords[1]);
-                                obstacles[i] = new Point(x, y);
+                                obstacles[i] = new Obstacle(config, x, y);
                             }
                         }
                         controller.updateGameState();
                         System.out.println("Decoded and Updated");
-                    } else Thread.sleep(100);
+                    } else Thread.sleep(100); // Wait for 100ms
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
@@ -72,21 +75,17 @@ public class Data {
         }).start();
     }
 
-    // Methods
-    public void updateEncodedData() {
-        MySQL mySQL = config.getMySQL();
-        if (!mySQL.isConnected()) return;
-        String encodedData = Calculate.encodeData(this, config);
-        mySQL.updateEncodedData(encodedData);
+    // Push data to MySQL
+    public void pushDataToMySQL() {
+        mySQL.pushToMySQL(Calculate.encodeData(this, config));
     }
-
 
     // Getter
-    public Point getCat() {
-        return catPosition;
+    public Cat getCat() {
+        return cat;
     }
 
-    public Point[] getObstacles() {
+    public Obstacle[] getObstacles() {
         return obstacles;
     }
 
@@ -95,16 +94,16 @@ public class Data {
     }
 
     // Setter
-    public void setCat(Point catPosition) {
-        if (this.catPosition == catPosition) return; // No change
-        this.catPosition.setLocation(catPosition); // Update
+    public void setCatLocation(Point catLocation) {
+        if (cat.getLocation() == catLocation) return; // No change
+        cat.setLocation(catLocation); // Update
     }
 
     public void setObstacle(Point obstacle) {
         for (int i = 0; i < obstacles.length; i++) {
             // Find unused slot
             if (obstacles[i] == null) {
-                obstacles[i] = obstacle;
+                obstacles[i] = new Obstacle(config, obstacle.x, obstacle.y); // Create new obstacle
                 break;
             }
         }
@@ -112,6 +111,6 @@ public class Data {
 
     public void nextMove() {
         isCatOnMove = !isCatOnMove; // Switch
-        updateEncodedData(); // Update
+        pushDataToMySQL(); // Update
     }
 }

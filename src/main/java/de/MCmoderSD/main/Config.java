@@ -1,18 +1,16 @@
 package de.MCmoderSD.main;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import de.MCmoderSD.UI.UI;
-import de.MCmoderSD.core.Controller;
-import de.MCmoderSD.data.Data;
 import de.MCmoderSD.utilities.Calculate;
-import de.MCmoderSD.utilities.ImageReader;
-import de.MCmoderSD.utilities.ImageStreamer;
-import de.MCmoderSD.utilities.JsonReader;
-import de.MCmoderSD.utilities.JsonStreamer;
-import de.MCmoderSD.utilities.MySQL;
+import de.MCmoderSD.utilities.database.MySQL;
+import de.MCmoderSD.utilities.image.ImageReader;
+import de.MCmoderSD.utilities.image.ImageStreamer;
+import de.MCmoderSD.utilities.json.JsonReader;
+import de.MCmoderSD.utilities.json.JsonStreamer;
 
-import java.awt.Dimension;
-import java.awt.image.BufferedImage;
+import javax.swing.ImageIcon;
+import java.awt.Color;
+
 
 @SuppressWarnings("unused")
 public class Config {
@@ -21,9 +19,6 @@ public class Config {
     private final MySQL mySQL;
     private final ImageReader imageReader;
     private final ImageStreamer imageStreamer;
-    private Controller controller;
-    private Data data;
-    private UI ui;
 
     // Constants
     private final String[] args;
@@ -31,13 +26,20 @@ public class Config {
     private final String gameID;
     private final int width;
     private final int height;
-    private final Dimension dimension;
     private final int fieldSize;
     private final int tries;
     private final boolean isResizable;
-    private final BufferedImage[] arrows;
 
-    // Language
+    // Assets
+    private final ImageIcon[] arrows;
+    private final ImageIcon catImage;
+    private final ImageIcon obstacleImage;
+    private final Color catColor;
+    private final Color obstacleColor;
+    private final Color backgroundColor;
+    private final Color fontColor;
+
+    // Messages
     private final String title;
     private final String invalidMove;
     private final String invalidObstacle;
@@ -60,12 +62,11 @@ public class Config {
 
         // Language
         if (args.length == 0) language = "en";
-        else language = args[0].toLowerCase();
+        else language = args[0];
 
         // GameID
         if (args.length == 2) gameID = args[1];
         else gameID = null;
-
 
         // Read Config
         JsonReader jsonReader = new JsonReader();
@@ -82,20 +83,17 @@ public class Config {
                 database.get("table").asText(),
                 gameID);
 
-        mySQL.connect();
+
+        JsonNode config = jsonReader.read("/config/default.json");
 
         // Constants
-        JsonNode config = jsonReader.read("/config/default.json");
         width = config.get("width").asInt();
         height = config.get("height").asInt();
         isResizable = config.get("isResizable").asBoolean();
-        dimension = new Dimension(width, height);
-        imageReader = new ImageReader();
-        imageStreamer = null;
 
         // Field Size and Tries
         String[] databaseArgs = null;
-        if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.getEncodedData());
+        if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.pullFromMySQL());
 
         if (databaseArgs == null) {
             fieldSize = config.get("fieldSize").asInt();
@@ -105,20 +103,26 @@ public class Config {
             tries = Integer.parseInt(databaseArgs[1]);
         }
 
-        // Arrows
-        arrows = new BufferedImage[4];
-        arrows[0] = imageReader.read(config.get("arrowUp").asText());
-        arrows[1] = imageReader.read(config.get("arrowLeft").asText());
-        arrows[2] = imageReader.read(config.get("arrowDown").asText());
-        arrows[3] = imageReader.read(config.get("arrowRight").asText());
+        imageReader = new ImageReader();
+        imageStreamer = null;
 
-        // Directions
+        // Assets
+        catImage = imageReader.createImageIcon(config.get("catImage").asText());
+        obstacleImage = imageReader.createImageIcon(config.get("obstacleImage").asText());
+        catColor = Calculate.getColor(config.get("catColor").asText());
+        obstacleColor = Calculate.getColor(config.get("obstacleColor").asText());
+        backgroundColor = Calculate.getColor(config.get("backgroundColor").asText());
+        fontColor = Calculate.getColor(config.get("fontColor").asText());
+
+        // Arrows
+        arrows = new ImageIcon[4];
+        arrows[0] = imageReader.createImageIcon(config.get("arrowUp").asText());
+        arrows[1] = imageReader.createImageIcon(config.get("arrowLeft").asText());
+        arrows[2] = imageReader.createImageIcon(config.get("arrowDown").asText());
+        arrows[3] = imageReader.createImageIcon(config.get("arrowRight").asText());
+
+
         JsonNode languageSet = jsonReader.read("/languages/" + language + ".json");
-        directions = new String[4];
-        directions[0] = languageSet.get("up").asText();
-        directions[1] = languageSet.get("left").asText();
-        directions[2] = languageSet.get("down").asText();
-        directions[3] = languageSet.get("right").asText();
 
         // Messages
         title = languageSet.get("title").asText();
@@ -134,6 +138,13 @@ public class Config {
         host = languageSet.get("host").asText();
         join = languageSet.get("join").asText();
         roomID = languageSet.get("roomID").asText();
+
+        // Directions
+        directions = new String[4];
+        directions[0] = languageSet.get("up").asText();
+        directions[1] = languageSet.get("left").asText();
+        directions[2] = languageSet.get("down").asText();
+        directions[3] = languageSet.get("right").asText();
     }
 
     // Constructor asset streaming
@@ -142,16 +153,15 @@ public class Config {
 
         // Language
         if (args.length == 0) language = "en";
-        else language = args[0].toLowerCase();
+        else language = args[0];
 
         // GameID
         if (args.length == 2) gameID = args[1];
         else gameID = null;
 
-
         // Read Config
-        JsonStreamer jsonReader = new JsonStreamer();
-        JsonNode database = jsonReader.read("https://raw.githubusercontent.com/MCmoderSD/CatchTheCat/master/src/main/resources/config/database.json");
+        JsonStreamer jsonStreamer = new JsonStreamer(url);
+        JsonNode database = jsonStreamer.read("/config/database.json");
 
         // Initialize MySQL Connection
         mySQL = new MySQL(
@@ -164,20 +174,17 @@ public class Config {
                 database.get("table").asText(),
                 gameID);
 
-        mySQL.connect();
+
+        JsonNode config = jsonStreamer.read("/config/default.json");
 
         // Constants
-        JsonNode config = jsonReader.read(url);
         width = config.get("width").asInt();
         height = config.get("height").asInt();
         isResizable = config.get("isResizable").asBoolean();
-        dimension = new Dimension(width, height);
-        imageStreamer = new ImageStreamer();
-        imageReader = null;
 
         // Field Size and Tries
         String[] databaseArgs = null;
-        if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.getEncodedData());
+        if (gameID != null) databaseArgs = Calculate.decodeData(mySQL.pullFromMySQL());
 
         if (databaseArgs == null) {
             fieldSize = config.get("fieldSize").asInt();
@@ -187,20 +194,26 @@ public class Config {
             tries = Integer.parseInt(databaseArgs[1]);
         }
 
-        // Arrows
-        arrows = new BufferedImage[4];
-        arrows[0] = imageStreamer.read(config.get("arrowUp").asText());
-        arrows[1] = imageStreamer.read(config.get("arrowLeft").asText());
-        arrows[2] = imageStreamer.read(config.get("arrowDown").asText());
-        arrows[3] = imageStreamer.read(config.get("arrowRight").asText());
+        imageStreamer = new ImageStreamer(url);
+        imageReader = null;
 
-        // Directions
-        JsonNode languageSet = jsonReader.read("https://raw.githubusercontent.com/MCmoderSD/CatchTheCat/master/src/main/resources/languages/" + language + ".json");
-        directions = new String[4];
-        directions[0] = languageSet.get("up").asText();
-        directions[1] = languageSet.get("left").asText();
-        directions[2] = languageSet.get("down").asText();
-        directions[3] = languageSet.get("right").asText();
+        // Assets
+        catImage = imageStreamer.createImageIcon(config.get("catImage").asText());
+        obstacleImage = imageStreamer.createImageIcon(config.get("obstacleImage").asText());
+        catColor = Calculate.getColor(config.get("catColor").asText());
+        obstacleColor = Calculate.getColor(config.get("obstacleColor").asText());
+        backgroundColor = Calculate.getColor(config.get("backgroundColor").asText());
+        fontColor = Calculate.getColor(config.get("fontColor").asText());
+
+        // Arrows
+        arrows = new ImageIcon[4];
+        arrows[0] = imageStreamer.createImageIcon(config.get("arrowUp").asText());
+        arrows[1] = imageStreamer.createImageIcon(config.get("arrowLeft").asText());
+        arrows[2] = imageStreamer.createImageIcon(config.get("arrowDown").asText());
+        arrows[3] = imageStreamer.createImageIcon(config.get("arrowRight").asText());
+
+
+        JsonNode languageSet = jsonStreamer.read("/languages/" + language + ".json");
 
         // Messages
         title = languageSet.get("title").asText();
@@ -216,36 +229,18 @@ public class Config {
         host = languageSet.get("host").asText();
         join = languageSet.get("join").asText();
         roomID = languageSet.get("roomID").asText();
-    }
 
-    // Setter Associations
-    public void setController(Controller controller) {
-        this.controller = controller;
-    }
-
-    public void setData(Data data) {
-        this.data = data;
-    }
-
-    public void setUI(UI ui) {
-        this.ui = ui;
+        // Directions
+        directions = new String[4];
+        directions[0] = languageSet.get("up").asText();
+        directions[1] = languageSet.get("left").asText();
+        directions[2] = languageSet.get("down").asText();
+        directions[3] = languageSet.get("right").asText();
     }
 
     // Getter Associations
     public MySQL getMySQL() {
         return mySQL;
-    }
-
-    public Controller getController() {
-        return controller;
-    }
-
-    public Data getData() {
-        return data;
-    }
-
-    public UI getUI() {
-        return ui;
     }
 
     public ImageReader getImageReader() {
@@ -277,10 +272,6 @@ public class Config {
         return height;
     }
 
-    public Dimension getDimension() {
-        return dimension;
-    }
-
     public int getFieldSize() {
         return fieldSize;
     }
@@ -293,12 +284,33 @@ public class Config {
         return isResizable;
     }
 
-    public BufferedImage[] getArrows() {
+    // Getter Assets
+    public ImageIcon[] getArrows() {
         return arrows;
     }
 
-    public String getDirections(int index) {
-        return directions[index];
+    public ImageIcon getCatImage() {
+        return catImage;
+    }
+
+    public ImageIcon getObstacleImage() {
+        return obstacleImage;
+    }
+
+    public Color getCatColor() {
+        return catColor;
+    }
+
+    public Color getObstacleColor() {
+        return obstacleColor;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public Color getFontColor() {
+        return fontColor;
     }
 
     // Getter Messages
@@ -340,6 +352,10 @@ public class Config {
 
     public String getCatcherIsOnMove() {
         return catcherIsOnMove;
+    }
+
+    public String getDirections(int index) {
+        return directions[index];
     }
 
     public String getHost() {

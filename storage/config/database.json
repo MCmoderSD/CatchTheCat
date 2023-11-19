@@ -1,0 +1,8 @@
+{
+  "host": "MCmoderSD.de",
+  "port": 3306,
+  "database": "CatchTheCat",
+  "user": "CTC",
+  "password": "CTC",
+  "table": "GameList"
+}

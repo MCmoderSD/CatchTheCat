@@ -4,8 +4,14 @@
   "fieldSize": 8,
   "isResizable": false,
   "tries": 12,
+  "catImage": "/Images/cat.png",
+  "obstacleImage": "/Images/obstacle.png",
   "arrowUp": "/Images/up.png",
   "arrowLeft": "/Images/left.png",
   "arrowDown": "/Images/down.png",
-  "arrowRight": "/Images/right.png"
+  "arrowRight": "/Images/right.png",
+  "backgroundColor": "#FFFFFF",
+  "fontColor": "#000000",
+  "catColor": "#0000FF",
+  "obstacleColor": "#FF0000"
 }

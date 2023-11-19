@@ -1,11 +1,11 @@
 package de.MCmoderSD.core;
 
-import de.MCmoderSD.UI.UI;
+import de.MCmoderSD.UI.Frame;
 import de.MCmoderSD.data.Data;
 import de.MCmoderSD.main.Config;
 import de.MCmoderSD.main.Main;
 import de.MCmoderSD.utilities.Calculate;
-import de.MCmoderSD.utilities.MySQL;
+import de.MCmoderSD.utilities.database.MySQL;
 
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -14,22 +14,19 @@ public class Controller {
 
     // Associations
     private final Config config;
+    private final Frame frame;
     private final Data data;
-    private final UI ui;
 
     // Constructor
-    public Controller(Config config) {
+    public Controller(Frame frame, Config config) {
+        this.frame = frame;
         this.config = config;
-        config.setController(this);
 
         data = new Data(this, config);
-        config.setData(data);
 
-        ui = new UI(config);
+        updateGameState();
+        frame.setVisible(true);
     }
-
-    // Methods
-
 
     // Check if move is valid
     private boolean isMoveValid(Point point) {
@@ -76,12 +73,12 @@ public class Controller {
     // Winner
     private void winner(boolean isCat) {
         if (isCat) { // Cat won
-            ui.appendLog(config.getCatWon());
-            ui.showMessage(config.getCatWon());
+            frame.appendLog(config.getCatWon());
+            frame.showMessage(config.getCatWon());
         }
         else { // Catcher won
-            ui.appendLog(config.getCatcherWon());
-            ui.showMessage(config.getCatcherWon());
+            frame.appendLog(config.getCatcherWon());
+            frame.showMessage(config.getCatcherWon());
         }
     }
 
@@ -90,24 +87,23 @@ public class Controller {
 
     // Update UI
     public void updateGameState() {
-        if (ui == null) return; // UI is not initialized
 
         // Update UI
-        ui.setCat(data.getCat());
-        for (Point obstacle : data.getObstacles()) if (obstacle != null) ui.setObstacle(obstacle);
+        frame.setCat(data.getCat());
+        for (Point obstacle : data.getObstacles()) if (obstacle != null) frame.setObstacle(obstacle);
 
         // Update Log
-        if (data.isCatOnMove()) ui.appendLog(config.getCatIsOnMove());
-        else ui.appendLog(config.getCatcherIsOnMove());
+        if (data.isCatOnMove()) frame.appendLog(config.getCatIsOnMove());
+        else frame.appendLog(config.getCatcherIsOnMove());
 
         // Update Game State
         checkForWinner();
-        ui.updateTries(Calculate.calculateTriesLeft(data, config));
+        frame.updateTries(Calculate.calculateTriesLeft(data, config));
     }
 
-    // Convert Key to Point and call catPlaysMove(Point)
+    // Convert Key to Point and call catPlaysMove (Point)
     public void catPlaysMove(int key) {
-        if (!data.isCatOnMove()) ui.showMessage(config.getCatIsNotOnMove()); // Cat is not on the move
+        if (!data.isCatOnMove()) frame.showMessage(config.getCatIsNotOnMove()); // Cat is not on the move
         else {
             // Get cat's position
             int x = data.getCat().x;
@@ -145,12 +141,12 @@ public class Controller {
 
     // Cat Movement
     public void catPlaysMove(Point point) {
-        if (!data.isCatOnMove()) ui.showMessage(config.getCatIsNotOnMove()); // Cat is not on the move
+        if (!data.isCatOnMove()) frame.showMessage(config.getCatIsNotOnMove()); // Cat is not on the move
         else {
             // Check if move is valid
-            if (!isMoveValid(point)) ui.showMessage(config.getInvalidMove()); // Invalid move
+            if (!isMoveValid(point)) frame.showMessage(config.getInvalidMove()); // Invalid move
             else {
-                data.setCat(point); // Update data
+                data.setCatLocation(point); // Update data
                 data.nextMove(); // Next move
                 updateGameState();
             }
@@ -159,15 +155,14 @@ public class Controller {
 
     // Obstacle Placement
     public void placeObstacle(Point point) {
-        if (data.isCatOnMove()) catPlaysMove(point);
-        else {
-        // Check if obstacle placement is valid
-        if (!isObstacleValid(point)) ui.showMessage(config.getInvalidObstacle()); // Invalid obstacle
-        else {
+        if (data.isCatOnMove()) catPlaysMove(point); // Cat is on the move
+        else { // Check if obstacle placement is valid
+            if (!isObstacleValid(point)) frame.showMessage(config.getInvalidObstacle()); // Invalid obstacle
+            else {
             data.setObstacle(point); // Update data
             data.nextMove(); // Next move
-            updateGameState();
-        }
+            updateGameState(); // Update UI
+            }
         }
     }
 
@@ -181,16 +176,16 @@ public class Controller {
         mySQL.connect();
 
         // Update encoded data
-        data.updateEncodedData();
+        data.pushDataToMySQL();
 
         // Update UI
-        ui.appendLog(config.getRoomID() + gameID);
-        ui.hideMultiplayerComponents();
+        frame.appendLog(config.getRoomID() + gameID);
+        frame.hideMultiplayerComponents();
     }
 
     // Join Game
     public void joinGame() {
-        ui.hideOldFrame(); // Hide old frame
-        Main.main(new String[] {config.getLanguage(), ui.getRoomID()}); // Start new game
+        frame.setVisible(false); // Hide old frame
+        Main.main(new String[] {config.getLanguage(), frame.getRoomID()}); // Start new game
     }
 }
