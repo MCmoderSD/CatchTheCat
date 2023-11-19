@@ -109,7 +109,7 @@ public abstract class ImageUtility {
     public ImageIcon createImageIcon(String resource) {
         if (imageIconCache.containsKey(resource)) return imageIconCache.get(resource);
 
-        if (this.url != null) resource = (this.url + url);
+        if (this.url != null) resource = (this.url + resource);
 
         ImageIcon imageIcon = new ImageIcon(read(resource));
         imageIconCache.put(resource, imageIcon);

@@ -57,7 +57,7 @@ public class Frame extends JFrame {
 
         // Inputs
         InputHandler inputHandler = new InputHandler(this);
-        new Timer(100, e -> requestFocusInWindow()).start();
+        //new Timer(100, e -> requestFocusInWindow()).start();
 
         setLocation(Calculate.centerFrame(this));
         controller = new Controller(this, config);
