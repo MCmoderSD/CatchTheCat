@@ -27,6 +27,7 @@ public class MenuPanel extends JPanel {
     private JTextField roomIDField;
     private JButton hostButton;
     private JButton joinButton;
+    private JButton restartButton;
 
     // Constructor
     public MenuPanel(Frame frame, Config config, Font defaultFont, int menuSize, int padding, int buttonSize, int menuButtonSize) {
@@ -81,14 +82,14 @@ public class MenuPanel extends JPanel {
 
         // Room ID Field
         roomIDField = new JTextField();
-        roomIDField.setBounds((getWidth() - 3 * menuButtonSize) / 2 - padding, getHeight() - 3 * menuButtonSize, 3 * menuButtonSize, menuButtonSize);
+        roomIDField.setBounds((getWidth() - 4 * menuButtonSize) / 2 - padding, getHeight() - 3 * menuButtonSize, 4 * menuButtonSize, menuButtonSize);
         roomIDField.setFont(defaultFont);
         if (config.getGameID() != null) hideMultiplayerComponents();
         add(roomIDField);
 
         // Host Button
         hostButton = new JButton();
-        hostButton.setBounds((getWidth() - 3 * menuButtonSize) / 2 - padding, getHeight() - menuButtonSize, 3 * menuButtonSize, menuButtonSize);
+        hostButton.setBounds((getWidth() - 4 * menuButtonSize) / 2 - padding, getHeight() - menuButtonSize, 4 * menuButtonSize, menuButtonSize);
         hostButton.setText(config.getHost());
         hostButton.setFont(defaultFont);
         hostButton.addActionListener(e -> frame.getController().hostGame());
@@ -97,12 +98,21 @@ public class MenuPanel extends JPanel {
 
         // Join Button
         joinButton = new JButton();
-        joinButton.setBounds((getWidth() - 3 * menuButtonSize) / 2 - padding, getHeight() - 2 * menuButtonSize, 3 * menuButtonSize, menuButtonSize);
+        joinButton.setBounds((getWidth() - 4 * menuButtonSize) / 2 - padding, getHeight() - 2 * menuButtonSize, 4 * menuButtonSize, menuButtonSize);
         joinButton.setText(config.getJoin());
         joinButton.setFont(defaultFont);
         joinButton.addActionListener(e -> frame.getController().joinGame());
         if (config.getGameID() != null) hideMultiplayerComponents();
         add(joinButton);
+
+        // Restart Button
+        restartButton = new JButton();
+        restartButton.setBounds(joinButton.getBounds());
+        restartButton.setText(config.getRestart());
+        restartButton.setFont(defaultFont);
+        restartButton.addActionListener(e -> frame.getController().restartGame());
+        restartButton.setVisible(false);
+        add(restartButton);
     }
 
     // Hide multiplayer components
@@ -115,5 +125,11 @@ public class MenuPanel extends JPanel {
     // Returns the room ID from the room ID field
     public String getRoomID() {
         return roomIDField.getText();
+    }
+
+    // Show restart button
+    public void setRestartButtonVisible(boolean visible) {
+        if (config.getGameID() != null) hideMultiplayerComponents();
+        restartButton.setVisible(visible);
     }
 }

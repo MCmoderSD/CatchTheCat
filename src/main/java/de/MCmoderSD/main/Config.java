@@ -29,6 +29,7 @@ public class Config {
     private final int fieldSize;
     private final int tries;
     private final boolean isResizable;
+    private final boolean isHost;
 
     // Assets
     private final ImageIcon[] arrows;
@@ -54,6 +55,7 @@ public class Config {
     private final String host;
     private final String join;
     private final String roomID;
+    private final String restart;
 
 
     // Constructor
@@ -67,6 +69,8 @@ public class Config {
         // GameID
         if (args.length == 2) gameID = args[1];
         else gameID = null;
+
+        isHost = gameID == null;
 
         // Read Config
         JsonReader jsonReader = new JsonReader();
@@ -138,6 +142,7 @@ public class Config {
         host = languageSet.get("host").asText();
         join = languageSet.get("join").asText();
         roomID = languageSet.get("roomID").asText();
+        restart = languageSet.get("restart").asText();
 
         // Directions
         directions = new String[4];
@@ -173,6 +178,8 @@ public class Config {
                 database.get("password").asText(),
                 database.get("table").asText(),
                 gameID);
+
+        isHost = gameID == null;
 
 
         JsonNode config = jsonStreamer.read("/config/default.json");
@@ -229,6 +236,7 @@ public class Config {
         host = languageSet.get("host").asText();
         join = languageSet.get("join").asText();
         roomID = languageSet.get("roomID").asText();
+        restart = languageSet.get("restart").asText();
 
         // Directions
         directions = new String[4];
@@ -282,6 +290,10 @@ public class Config {
 
     public boolean isResizable() {
         return isResizable;
+    }
+
+    public boolean isHost() {
+        return isHost;
     }
 
     // Getter Assets
@@ -368,5 +380,9 @@ public class Config {
 
     public String getRoomID() {
         return roomID;
+    }
+
+    public String getRestart() {
+        return restart;
     }
 }

@@ -15,5 +15,6 @@
   "right": "Rechts",
   "host": "Host",
   "roomID": "Raum Code: ",
-  "join": "Join"
+  "join": "Join",
+  "restart": "Neustart"
 }

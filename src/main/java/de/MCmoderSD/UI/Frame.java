@@ -6,7 +6,6 @@ import de.MCmoderSD.utilities.Calculate;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.Timer;
 import java.awt.Point;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -99,5 +98,9 @@ public class Frame extends JFrame {
 
     public void setCat(Point newButton) {
         buttonPanel.setCat(newButton);
+    }
+
+    public void setRestartButtonVisible(boolean visible) {
+        menuPanel.setRestartButtonVisible(visible);
     }
 }

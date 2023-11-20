@@ -15,5 +15,6 @@
   "right": "Destra",
   "host": "Host",
   "roomID": "Room ID: ",
-  "join": "Join"
+  "join": "Join",
+  "restart": "Ricomincia"
 }

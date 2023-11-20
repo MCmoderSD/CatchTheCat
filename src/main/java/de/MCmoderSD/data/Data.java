@@ -19,6 +19,7 @@ public class Data {
     // Variables
     private final Obstacle[] obstacles;
     private final Cat cat;
+    private final Thread updateLoop;
     private boolean isCatOnMove;
 
     // Constructor
@@ -31,9 +32,10 @@ public class Data {
         isCatOnMove = true;
         cat = new Cat(config);
         obstacles = new Obstacle[config.getTries()];
+        if (config.isHost()) pushDataToMySQL();
 
         // Update Loop
-        new Thread(() -> {
+        updateLoop = new Thread(() -> {
             while (true) {
                 try {
 
@@ -72,7 +74,9 @@ public class Data {
                     System.err.println(e.getMessage());
                 }
             }
-        }).start();
+        });
+
+        updateLoop.start();
     }
 
     // Push data to MySQL

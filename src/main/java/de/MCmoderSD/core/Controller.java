@@ -15,7 +15,7 @@ public class Controller {
     // Associations
     private final Config config;
     private final Frame frame;
-    private final Data data;
+    private Data data;
 
     // Constructor
     public Controller(Frame frame, Config config) {
@@ -80,6 +80,9 @@ public class Controller {
             frame.appendLog(config.getCatcherWon());
             frame.showMessage(config.getCatcherWon());
         }
+
+        // Update UI
+        frame.setRestartButtonVisible(true);
     }
 
     // Public Methods
@@ -187,5 +190,13 @@ public class Controller {
     public void joinGame() {
         frame.setVisible(false); // Hide old frame
         Main.main(new String[] {config.getLanguage(), frame.getRoomID()}); // Start new game
+    }
+
+    // Restart Game
+    public void restartGame() {
+        data = new Data(this, config); // Reset data
+        frame.clearLog(); // Clear log
+        frame.setRestartButtonVisible(false); // Hide restart button
+        updateGameState();
     }
 }
