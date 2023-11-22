@@ -89,7 +89,7 @@ public class Frame extends JFrame {
     }
 
     public void showMessage(String message) {
-        JOptionPane.showMessageDialog(this, message);
+        new Thread(() -> JOptionPane.showMessageDialog(this, message)).start();
     }
 
     public void setObstacle(Point newButton) {
@@ -103,4 +103,6 @@ public class Frame extends JFrame {
     public void setRestartButtonVisible(boolean visible) {
         menuPanel.setRestartButtonVisible(visible);
     }
+
+
 }

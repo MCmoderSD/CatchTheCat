@@ -85,17 +85,17 @@ public class Calculate {
         String end = ";";
         int tries = config.getTries();
         int triesLeft = calculateTriesLeft(data, config);
+        int isNewGame = data.isNewGame() ? 1 : 0;
 
         // Encode Config
-        String confPack = config.getFieldSize() + end + tries;
+        String confPack = config.getFieldSize() + end + tries + end + isNewGame;
 
         // Encode Data
         String dataPack;
         String[] obstaclePackTemp = new String[tries];
 
         // Encode CatIsOnMove
-        int isCatOnMove = 0;
-        if (data.isCatOnMove()) isCatOnMove = 1;
+        int isCatOnMove = data.isCatOnMove() ? 1 : 0;
 
         // Encode Obstacles
         Point[] obstacles = data.getObstacles();
@@ -143,7 +143,7 @@ public class Calculate {
             idBuilder.append(randomChar);
         }
 
-        return idBuilder.toString();
+        return idBuilder.toString().toUpperCase();
     }
 
     // File Checker

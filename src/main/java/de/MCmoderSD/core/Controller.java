@@ -15,7 +15,7 @@ public class Controller {
     // Associations
     private final Config config;
     private final Frame frame;
-    private Data data;
+    private final Data data;
 
     // Constructor
     public Controller(Frame frame, Config config) {
@@ -82,6 +82,7 @@ public class Controller {
         }
 
         // Update UI
+        frame.hideMultiplayerComponents();
         frame.setRestartButtonVisible(true);
     }
 
@@ -194,7 +195,10 @@ public class Controller {
 
     // Restart Game
     public void restartGame() {
-        data = new Data(this, config); // Reset data
+        data.setUpdateThreadActive(false); // Stop update thread
+        data.setNewGame(!data.isNewGame());
+        data.initData(); // Reset data
+        data.setUpdateThreadActive(true); // Start update thread
         frame.clearLog(); // Clear log
         frame.setRestartButtonVisible(false); // Hide restart button
         updateGameState();

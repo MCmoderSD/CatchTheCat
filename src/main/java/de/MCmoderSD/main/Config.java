@@ -29,7 +29,6 @@ public class Config {
     private final int fieldSize;
     private final int tries;
     private final boolean isResizable;
-    private final boolean isHost;
 
     // Assets
     private final ImageIcon[] arrows;
@@ -69,8 +68,6 @@ public class Config {
         // GameID
         if (args.length == 2) gameID = args[1];
         else gameID = null;
-
-        isHost = gameID == null;
 
         // Read Config
         JsonReader jsonReader = new JsonReader();
@@ -178,9 +175,7 @@ public class Config {
                 database.get("password").asText(),
                 database.get("table").asText(),
                 gameID);
-
-        isHost = gameID == null;
-
+        
 
         JsonNode config = jsonStreamer.read("/config/default.json");
 
@@ -290,10 +285,6 @@ public class Config {
 
     public boolean isResizable() {
         return isResizable;
-    }
-
-    public boolean isHost() {
-        return isHost;
     }
 
     // Getter Assets
