@@ -84,7 +84,7 @@ public class Data {
         isCatOnMove = true;
         cat = new Cat(config);
         obstacles = new Obstacle[config.getTries()];
-        pushDataToMySQL();
+        if (isNewGame) pushDataToMySQL();
 
         // Update Loop
         updateLoop = new Thread(() -> {
@@ -107,7 +107,9 @@ public class Data {
                     if (decodeIsValid) {
                         String[] parts = encodedData.split(";");
 
-                        if (Objects.equals(parts[2], "1")) controller.restartGame();
+                        isNewGame = Objects.equals(parts[2], "1");
+                        if (isNewGame) controller.restartGame();
+
                         isCatOnMove = Objects.equals(parts[3], "1");
 
                         String[] catCords = parts[4].split(":");

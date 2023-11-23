@@ -39,7 +39,7 @@ public class JsonReader extends JsonUtility {
             else inputStream = getClass().getResourceAsStream(json); // JSON is in Jar
 
             // Null check
-            if (inputStream == null) throw new IllegalArgumentException("The JSON file could not be found: " + json);
+            if (inputStream == null) throw  new IllegalArgumentException("The JSON file could not be found: " + json);
 
             // Write to cache
             JsonNode node = mapper.readTree(inputStream);
