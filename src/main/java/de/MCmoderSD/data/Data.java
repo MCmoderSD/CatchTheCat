@@ -9,8 +9,10 @@ import de.MCmoderSD.utilities.database.MySQL;
 
 import java.awt.Point;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-@SuppressWarnings("BusyWait")
 public class Data {
 
     // Associations
@@ -19,12 +21,10 @@ public class Data {
     private final MySQL mySQL;
 
     // Variables
-    private Thread updateLoop;
     private Obstacle[] obstacles;
     private Cat cat;
     private boolean isCatOnMove;
     private boolean isNewGame;
-    private boolean updateThreadActive;
 
     // Constructor
     public Data(Controller controller, Config config) {
@@ -33,8 +33,55 @@ public class Data {
         this.mySQL = config.getMySQL();
 
         initData();
-        updateLoop.start();
-        updateThreadActive = true;
+
+        // Update Loop
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(this::updateFromMySQL, 0, 100, TimeUnit.MILLISECONDS);
+    }
+
+    // Pull data from MySQL
+    private void updateFromMySQL() {
+        // Variables
+        boolean decodeIsValid;
+        String oldEncodedData;
+        String encodedData = null;
+
+        // Pull and differentiate between local and online
+        if (mySQL.isConnected()) {
+            encodedData = mySQL.pullFromMySQL();
+            oldEncodedData = Calculate.encodeData(this, config);
+            decodeIsValid = !Objects.equals(encodedData, oldEncodedData);
+        } else decodeIsValid = false;
+
+        // Decode if valid
+        if (decodeIsValid) {
+            String[] parts = encodedData.split(";"); // Split on each semicolon
+
+            // Decode if new game
+            isNewGame = Objects.equals(parts[2], "1"); // Check if new game
+            if (isNewGame) controller.restartGame(); // Restart if new game
+
+            // Decode if cat is on move
+            isCatOnMove = Objects.equals(parts[3], "1"); // Check if cat is on move
+
+            // Decode cat
+            String[] catCords = parts[4].split(":"); // Split cat cords into x and y
+            setCatLocation(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1]))); // Set cat location
+
+            // Decode obstacles
+            if (parts.length > 5) {
+                for (int i = 0; i < parts.length - 5; i++) { // For each placed obstacle
+                    String[] obstacleCords = parts[5 + i].split(":"); // Split obstacle cords into x and y
+                    int x = Integer.parseInt(obstacleCords[0]);
+                    int y = Integer.parseInt(obstacleCords[1]);
+                    obstacles[i] = new Obstacle(config, x, y); // Create new obstacle
+                }
+            }
+
+            // Update game state
+            controller.updateGameState();
+            System.out.println("Decoded and Updated");
+        }
     }
 
     // Push data to MySQL
@@ -42,24 +89,18 @@ public class Data {
         mySQL.pushToMySQL(Calculate.encodeData(this, config));
     }
 
-    // Getter
-    public Cat getCat() {
-        return cat;
-    }
-
-    public Obstacle[] getObstacles() {
-        return obstacles;
-    }
-
-    public boolean isCatOnMove() {
-        return isCatOnMove;
-    }
-
-    public boolean isNewGame() {
-        return isNewGame;
-    }
-
     // Setter
+    public void initData() {
+
+        // Reset data
+        isCatOnMove = true;
+        cat = new Cat(config);
+        obstacles = new Obstacle[config.getTries()];
+
+        // Update server
+        pushDataToMySQL();
+    }
+
     public void setCatLocation(Point catLocation) {
         if (cat.getLocation() == catLocation) return; // No change
         cat.setLocation(catLocation); // Update
@@ -80,64 +121,24 @@ public class Data {
         pushDataToMySQL(); // Update
     }
 
-    public void initData() {
-        isCatOnMove = true;
-        cat = new Cat(config);
-        obstacles = new Obstacle[config.getTries()];
-        if (isNewGame) pushDataToMySQL();
-
-        // Update Loop
-        updateLoop = new Thread(() -> {
-            while (true) {
-
-                try {
-                    if (!updateThreadActive) return;
-                    boolean decodeIsValid;
-                    String oldEncodedData;
-                    String encodedData = null;
-
-                    // Pull and differentiate between local and online
-                    if (mySQL.isConnected()) {
-                        encodedData = mySQL.pullFromMySQL();
-                        oldEncodedData = Calculate.encodeData(this, config);
-                        decodeIsValid = !Objects.equals(encodedData, oldEncodedData);
-                    } else decodeIsValid = false;
-
-                    // Decode
-                    if (decodeIsValid) {
-                        String[] parts = encodedData.split(";");
-
-                        isNewGame = Objects.equals(parts[2], "1");
-                        if (isNewGame) controller.restartGame();
-
-                        isCatOnMove = Objects.equals(parts[3], "1");
-
-                        String[] catCords = parts[4].split(":");
-                        setCatLocation(new Point(Integer.parseInt(catCords[0]), Integer.parseInt(catCords[1])));
-
-                        if (parts.length > 5) {
-                            for (int i = 0; i < parts.length - 5; i++) {
-                                String[] obstacleCords = parts[5 + i].split(":");
-                                int x = Integer.parseInt(obstacleCords[0]);
-                                int y = Integer.parseInt(obstacleCords[1]);
-                                obstacles[i] = new Obstacle(config, x, y);
-                            }
-                        }
-                        controller.updateGameState();
-                        System.out.println("Decoded and Updated");
-                    } else Thread.sleep(100); // Wait for 100ms
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
-                }
-            }
-        });
-    }
-
-    public void setNewGame(boolean newGame) {
+    public void toggleNewGame(boolean newGame) {
         isNewGame = newGame;
     }
 
-    public void setUpdateThreadActive(boolean updateThreadActive) {
-        this.updateThreadActive = updateThreadActive;
+    // Getter
+    public Cat getCat() {
+        return cat;
+    }
+
+    public Obstacle[] getObstacles() {
+        return obstacles;
+    }
+
+    public boolean isCatOnMove() {
+        return isCatOnMove;
+    }
+
+    public boolean isNewGame() {
+        return isNewGame;
     }
 }

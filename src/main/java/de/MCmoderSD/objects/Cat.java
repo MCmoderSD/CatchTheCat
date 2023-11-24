@@ -25,14 +25,6 @@ public class Cat extends Point {
         color = config.getCatColor();
     }
 
-    // Constructor
-    public Cat(Config config, int x, int y) {
-        setLocation(x, y);
-
-        image = config.getCatImage();
-        color = config.getCatColor();
-    }
-
     // Getter
     public ImageIcon getImage() {
         return image;

@@ -77,19 +77,21 @@ public class ButtonPanel extends JPanel {
     }
 
     // For obstacle placement
-    public void setObstacle(Point newButton) {
-        JButton button = buttons[newButton.x][newButton.y];
+    public void setObstacle(Point obstaclePosition) {
+        JButton button = buttons[obstaclePosition.x][obstaclePosition.y];
         button.setBackground(config.getBackgroundColor());
         button.setIcon(imageReader != null ? imageReader.scaleImageIcon(config.getObstacleImage(), buttonSize) : imageStreamer.scaleImageIcon(config.getObstacleImage(), buttonSize));
     }
 
     // For cat placement
-    public void setCat(Point newButton) {
+    public void setCat(Point catPosition) {
+
         for (int i = 0; i < config.getFieldSize(); i++) for (int j = 0; j < config.getFieldSize(); j++) {
             buttons[i][j].setBackground(config.getBackgroundColor());
             buttons[i][j].setIcon(null);
         }
-        JButton button = buttons[newButton.x][newButton.y];
+        
+        JButton button = buttons[catPosition.x][catPosition.y];
         button.setBackground(config.getCatColor());
         button.setIcon(imageReader != null ? imageReader.scaleImageIcon(config.getCatImage(), buttonSize) : imageStreamer.scaleImageIcon(config.getCatImage(), buttonSize));
     }

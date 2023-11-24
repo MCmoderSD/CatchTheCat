@@ -44,6 +44,7 @@ public class InfoPanel extends JPanel {
     }
 
     public void initUI() {
+
         // Tries Label
         triesLabel = new JLabel();
         triesLabel.setBounds(padding, 0, buttonPanelSize, padding * 2);
@@ -61,6 +62,7 @@ public class InfoPanel extends JPanel {
         add(infoArea);
         clearLog();
 
+        // Scroll Pane
         JScrollPane scrollPane = new JScrollPane(infoArea);
         scrollPane.setBounds(padding, triesLabel.getHeight(), buttonPanelSize - 2 * padding, menuSize - triesLabel.getHeight());
         scrollPane.setBorder(null);

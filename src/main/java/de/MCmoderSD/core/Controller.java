@@ -8,7 +8,6 @@ import de.MCmoderSD.utilities.Calculate;
 import de.MCmoderSD.utilities.database.MySQL;
 
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 
 public class Controller {
 
@@ -28,17 +27,21 @@ public class Controller {
         frame.setVisible(true);
     }
 
+
+
+    // Private Methods
+
+
     // Check if move is valid
     private boolean isMoveValid(Point point) {
         if (point.equals(data.getCat())) return false; // Cat can't move to its own position
-        for (Point obstacle : data.getObstacles()) if (point.equals(obstacle)) return false; // Cat can't move to an obstacle
+        for (Point obstacle : data.getObstacles()) if (point.equals(obstacle)) return false; // Cat can't move onto an obstacle
         if (point.x < 0 || point.x >= config.getFieldSize() || point.y < 0 || point.y >= config.getFieldSize()) return false; // Cat can't move outside the field
 
         // Cat can't move diagonally or more than one tile
         int deltaX = (int) (point.getX() - data.getCat().getX());
         int deltaY = (int) (point.getY() - data.getCat().getY());
-        int delta = Math.abs(deltaX) + Math.abs(deltaY);
-        return delta == 1;
+        return Math.abs(deltaX) + Math.abs(deltaY) == 1;
     }
 
     // Check if obstacle placement is valid
@@ -53,10 +56,6 @@ public class Controller {
     // Check if somebody won
     private void checkForWinner() {
 
-        // Check how many tries are left
-        int tries = config.getTries();
-        for (Point obstacle : data.getObstacles()) if (obstacle != null) --tries;
-
         // Check how many valid moves are left
         int validMoves = 0;
 
@@ -67,7 +66,7 @@ public class Controller {
 
         // Check if somebody won
         if (validMoves == 0) winner(false);
-        else if (tries == 0) winner(true);
+        else if (Calculate.calculateTriesLeft(data, config) == 0) winner(true);
     }
 
     // Winner
@@ -86,23 +85,25 @@ public class Controller {
         frame.setRestartButtonVisible(true);
     }
 
+
+
     // Public Methods
 
 
     // Update UI
     public void updateGameState() {
 
-        // Update UI
-        frame.setCat(data.getCat());
-        for (Point obstacle : data.getObstacles()) if (obstacle != null) frame.setObstacle(obstacle);
+        // Update Button Panel
+        frame.setCat(data.getCat()); // Update cat
+        for (Point obstacle : data.getObstacles()) if (obstacle != null) frame.setObstacle(obstacle); // Update obstacles
 
-        // Update Log
-        if (data.isCatOnMove()) frame.appendLog(config.getCatIsOnMove());
-        else frame.appendLog(config.getCatcherIsOnMove());
+        // Update UI
+        if (data.isCatOnMove()) frame.appendLog(config.getCatIsOnMove()); // Cat is on the move
+        else frame.appendLog(config.getCatcherIsOnMove()); // Catcher is on the move
 
         // Update Game State
-        checkForWinner();
-        frame.updateTries(Calculate.calculateTriesLeft(data, config));
+        checkForWinner(); // Check if somebody won
+        frame.updateTries(Calculate.calculateTriesLeft(data, config)); // Update tries
     }
 
     // Convert Key to Point and call catPlaysMove (Point)
@@ -115,26 +116,25 @@ public class Controller {
 
             // Convert key into an x or y direction
             switch (key) {
-                case KeyEvent.VK_W:
-                case KeyEvent.VK_UP:
-                case 0:
-                    --y;
+                case 0x57:  // W Key
+                case 0x26:  // Up Arrow
+                case 0:     // Button up
+                    --y;    // Move up
                     break;
-                case KeyEvent.VK_A:
-                case KeyEvent.VK_LEFT:
-                case 1:
-                    --x;
+                case 0x41:  // A Key
+                case 0x25:  // Left Arrow
+                case 1:     // Button left
+                    --x;    // Move left
                     break;
-                case KeyEvent.VK_S:
-                case KeyEvent.VK_DOWN:
-                case 2:
-
-                    ++y;
+                case 0x53:  // S Key
+                case 0x28:  // Down Arrow
+                case 2:     // Button down
+                    ++y;    // Move down
                     break;
-                case KeyEvent.VK_D:
-                case KeyEvent.VK_RIGHT:
-                case 3:
-                    ++x;
+                case 0x44:  // D Key
+                case 0x27:  // Right Arrow
+                case 3:     // Button right
+                    ++x;    // Move right
                     break;
             }
 
@@ -151,8 +151,8 @@ public class Controller {
             if (!isMoveValid(point)) frame.showMessage(config.getInvalidMove()); // Invalid move
             else {
                 data.setCatLocation(point); // Update data
-                data.nextMove(); // Next move
-                updateGameState();
+                data.nextMove(); // Switch
+                updateGameState(); // Update UI
             }
         }
     }
@@ -160,12 +160,14 @@ public class Controller {
     // Obstacle Placement
     public void placeObstacle(Point point) {
         if (data.isCatOnMove()) catPlaysMove(point); // Cat is on the move
-        else { // Check if obstacle placement is valid
+
+        // Check if obstacle placement is valid
+        else {
             if (!isObstacleValid(point)) frame.showMessage(config.getInvalidObstacle()); // Invalid obstacle
             else {
-            data.setObstacle(point); // Update data
-            data.nextMove(); // Next move
-            updateGameState(); // Update UI
+                data.setObstacle(point); // Update data
+                data.nextMove(); // Switch
+                updateGameState(); // Update UI
             }
         }
     }
@@ -195,12 +197,9 @@ public class Controller {
 
     // Restart Game
     public void restartGame() {
-        data.setUpdateThreadActive(false); // Stop update thread
-        data.setNewGame(!data.isNewGame());
+        data.toggleNewGame(!data.isNewGame()); // Switch
         data.initData(); // Reset data
-        data.setUpdateThreadActive(true); // Start update thread
         frame.clearLog(); // Clear log
         frame.setRestartButtonVisible(false); // Hide restart button
-        updateGameState();
     }
 }

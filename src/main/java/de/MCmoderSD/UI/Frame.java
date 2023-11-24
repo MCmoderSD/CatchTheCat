@@ -35,11 +35,10 @@ public class Frame extends JFrame {
         int buttonPanelSize = min + padding * 2;
         int buttonSize = min / config.getFieldSize();
         int menuSize = max - buttonPanelSize - 2 * padding;
-        int menuButtonSize = 2 * padding;
         Font defaultFont = new Font("Roboto", Font.PLAIN, 20);
 
         // Create MenuPanel Panel
-        menuPanel = new MenuPanel(this, config, defaultFont, menuSize, padding, buttonSize, menuButtonSize);
+        menuPanel = new MenuPanel(this, config, defaultFont, menuSize, padding, buttonSize, 2 * padding);
 
         // Create Info Panel
         infoPanel = new InfoPanel(this, config, defaultFont, buttonPanelSize, menuSize, padding);

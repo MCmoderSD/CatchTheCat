@@ -47,6 +47,7 @@ public class MenuPanel extends JPanel {
     }
 
     public void initUI() {
+
         // Create direction buttons
         JButton[] directionButtons = new JButton[4];
         Rectangle[] directionButtonBounds = new Rectangle[4];
@@ -124,7 +125,7 @@ public class MenuPanel extends JPanel {
 
     // Returns the room ID from the room ID field
     public String getRoomID() {
-        return roomIDField.getText();
+        return roomIDField.getText().toUpperCase();
     }
 
     // Show restart button

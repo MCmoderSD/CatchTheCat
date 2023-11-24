@@ -36,10 +36,11 @@ public class MySQL {
 
     // Connect to MySQL
     public void connect() {
-        if (gameID == null) return;
+        if (gameID == null) return; // no gameID set
+
         try {
-            if (isConnected()) return;
-            connection = java.sql.DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password);
+            if (isConnected()) return; // already connected
+            connection = java.sql.DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password); // connect
             System.out.println("MySQL connected!");
         } catch (java.sql.SQLException e) {
             System.err.println(e.getMessage());
@@ -49,8 +50,8 @@ public class MySQL {
     // Disconnect from MySQL
     public void disconnect() {
         try {
-            if (!isConnected()) return;
-            connection.close();
+            if (!isConnected()) return; // already disconnected
+            connection.close(); // disconnect
             System.out.println("MySQL disconnected!");
         } catch (java.sql.SQLException e) {
             System.err.println(e.getMessage());
@@ -66,49 +67,50 @@ public class MySQL {
     public String pullFromMySQL() {
         String encodedData = null;
         try {
-            if (!isConnected()) connect();
+            if (!isConnected()) connect(); // connect if not connected
 
-            String query = "SELECT encodedData FROM " + table + " WHERE GameID = ?";
+            String query = "SELECT encodedData FROM " + table + " WHERE GameID = ?"; // query
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, gameID);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            preparedStatement.setString(1, gameID); // search for data with gameID
+            ResultSet resultSet = preparedStatement.executeQuery(); // execute query
 
-            if (resultSet.next()) encodedData = resultSet.getString("encodedData");
+            if (resultSet.next()) encodedData = resultSet.getString("encodedData"); // get encodedData
 
+            // Close connections
             resultSet.close();
             preparedStatement.close();
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
-        return encodedData;
+
+        return encodedData; // return encodedData
     }
 
     // Insert data into MySQL
     public void pushToMySQL(String encodedData) {
         try {
-            if (!isConnected()) return;
+            if (!isConnected()) return; // not connected
 
             // First, try to update the row
-            String updateQuery = "UPDATE " + table + " SET encodedData = ? WHERE GameID = ?";
+            String updateQuery = "UPDATE " + table + " SET encodedData = ? WHERE GameID = ?"; // query
             PreparedStatement updateStatement = connection.prepareStatement(updateQuery);
-            updateStatement.setString(1, encodedData);
-            updateStatement.setString(2, gameID);
+            updateStatement.setString(1, encodedData); // set encodedData
+            updateStatement.setString(2, gameID); // search for data with gameID
 
-            int rowsUpdated = updateStatement.executeUpdate();
+            int rowsUpdated = updateStatement.executeUpdate(); // execute query and get updated rows
             updateStatement.close();
 
             // If no rows were updated, the gameID doesn't exist, so insert a new row
             if (rowsUpdated == 0) {
-                String insertQuery = "INSERT INTO " + table + " (GameID, encodedData) VALUES (?, ?)";
+                String insertQuery = "INSERT INTO " + table + " (GameID, encodedData) VALUES (?, ?)"; // query
                 PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
-                insertStatement.setString(1, gameID);
-                insertStatement.setString(2, encodedData);
-                insertStatement.executeUpdate();
+                insertStatement.setString(1, gameID); // set gameID
+                insertStatement.setString(2, encodedData); // set encodedData
+                insertStatement.executeUpdate(); // execute query
                 insertStatement.close();
 
                 System.out.println("New Game created " + gameID);
-            } else System.out.println("Data Pushed");
-
+            } else System.out.println("Encoded and Pushed");
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
