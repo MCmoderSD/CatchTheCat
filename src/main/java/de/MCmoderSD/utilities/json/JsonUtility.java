@@ -1,84 +1,242 @@
 package de.MCmoderSD.utilities.json;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.HashMap;
 
 @SuppressWarnings("unused")
-public abstract class JsonUtility {
+public class JsonUtility {
 
     // Attributes
-    protected ObjectMapper mapper;
-    protected HashMap<String, JsonNode> jsonCache;
-    protected String url;
-    protected boolean isAbsolute;
+    private final HashMap<String, JsonNode> jsonCache;
 
-    // Constructor without isAbsolute
+    private String url;
+    private boolean isAbsolute;
+
+    // Default constructor
     public JsonUtility() {
+        url = null;
         isAbsolute = false;
-        mapper = new ObjectMapper();
-        jsonCache = new HashMap<>();
+        this.jsonCache = new HashMap<>();
     }
 
-    // Constructor with URL
+    // Constructor with url
     public JsonUtility(String url) {
-        this.isAbsolute = false;
         this.url = url;
-        mapper = new ObjectMapper();
-        jsonCache = new HashMap<>();
+        this.isAbsolute = false;
+        this.jsonCache = new HashMap<>();
     }
 
-    // Constructor with isAbsolute
+    // Constructor with isAbsolute path
     public JsonUtility(boolean isAbsolute) {
-        this.isAbsolute = isAbsolute;
         this.url = null;
-        mapper = new ObjectMapper();
-        jsonCache = new HashMap<>();
+        this.isAbsolute = isAbsolute;
+        this.jsonCache = new HashMap<>();
     }
 
-    // Read JSON file and return JsonNode
-    public abstract JsonNode read(String json);
+    public JsonUtility(HashMap<String, JsonNode> jsonCache) {
+        this.url = null;
+        this.isAbsolute = false;
+        this.jsonCache = jsonCache;
+    }
+
+    public JsonUtility(JsonUtility jsonUtility) {
+        this.url = jsonUtility.getURL();
+        this.isAbsolute = jsonUtility.isAbsolute();
+        this.jsonCache = jsonUtility.getJsonCache();
+    }
+
+    public JsonUtility(JsonNode jsonNode) {
+        this.url = null;
+        this.isAbsolute = jsonNode.isAbsolute();
+        this.jsonCache = new HashMap<>();
+
+        jsonCache.put(jsonNode.getPath(), jsonNode);
+    }
+
+    public JsonUtility(JsonNode[] jsonNodes) {
+        this.url = null;
+        this.isAbsolute = false;
+        this.jsonCache = new HashMap<>();
+
+        for (JsonNode jsonNode : jsonNodes) jsonCache.put(jsonNode.getPath(), jsonNode);
+    }
+
+    // Methods
+    public JsonNode load(String path) {
+        if (jsonCache.containsKey(path)) return jsonCache.get(path);
+        else {
+            JsonNode jsonNode = url != null ? new JsonNode(url, path) : new JsonNode(path, isAbsolute);
+            jsonCache.put(path, jsonNode);
+            return jsonNode;
+        }
+    }
+
+    public JsonNode[] load(String[] paths) {
+        JsonNode[] jsonNodes = new JsonNode[paths.length];
+        for (int i = 0; i < paths.length; i++) {
+            if (jsonCache.containsKey(paths[i])) jsonNodes[i] = jsonCache.get(paths[i]);
+            else {
+                JsonNode jsonNode = url != null ? new JsonNode(url, paths[i]) : new JsonNode(paths[i], isAbsolute);
+                jsonCache.put(paths[i], jsonNode);
+                jsonNodes[i] = jsonNode;
+            }
+        }
+        return jsonNodes;
+    }
+
+    public JsonNode load(String url, String path) {
+        if (jsonCache.containsKey(path)) return jsonCache.get(path);
+        else {
+            JsonNode jsonNode = new JsonNode(url, path);
+            jsonCache.put(path, jsonNode);
+            return jsonNode;
+        }
+    }
+
+    public JsonNode[] load(String url, String[] paths) {
+        JsonNode[] jsonNodes = new JsonNode[paths.length];
+        for (int i = 0; i < paths.length; i++) {
+            if (jsonCache.containsKey(paths[i])) jsonNodes[i] = jsonCache.get(paths[i]);
+            else {
+                JsonNode jsonNode = new JsonNode(url, paths[i]);
+                jsonCache.put(paths[i], jsonNode);
+                jsonNodes[i] = jsonNode;
+            }
+        }
+        return jsonNodes;
+    }
+
+    public JsonNode[] load(String[] urls, String[] paths) {
+        JsonNode[] jsonNodes = new JsonNode[paths.length];
+        for (int i = 0; i < paths.length; i++) {
+            if (jsonCache.containsKey(paths[i])) jsonNodes[i] = jsonCache.get(paths[i]);
+            else {
+                JsonNode jsonNode = new JsonNode(urls[i], paths[i]);
+                jsonCache.put(paths[i], jsonNode);
+                jsonNodes[i] = jsonNode;
+            }
+        }
+        return jsonNodes;
+    }
+
+    public JsonNode load(String path, boolean isAbsolute) {
+        if (jsonCache.containsKey(path)) return jsonCache.get(path);
+        else {
+            JsonNode jsonNode = new JsonNode(path, isAbsolute);
+            jsonCache.put(path, jsonNode);
+            return jsonNode;
+        }
+    }
+
+    public JsonNode[] load(String[] paths, boolean isAbsolute) {
+        JsonNode[] jsonNodes = new JsonNode[paths.length];
+        for (int i = 0; i < paths.length; i++) {
+            if (jsonCache.containsKey(paths[i])) jsonNodes[i] = jsonCache.get(paths[i]);
+            else {
+                JsonNode jsonNode = new JsonNode(paths[i], isAbsolute);
+                jsonCache.put(paths[i], jsonNode);
+                jsonNodes[i] = jsonNode;
+            }
+        }
+        return jsonNodes;
+    }
+
+    // Getter
+    public String getURL() {
+        return url;
+    }
+
+    public boolean isEmpty() {
+        return jsonCache.isEmpty();
+    }
+
+    public int size() {
+        return jsonCache.size();
+    }
+
+    public HashMap<String, JsonNode> getJsonCache() {
+        return jsonCache;
+    }
+
+    public boolean isAbsolute() {
+        return isAbsolute;
+    }
+
+    public void setJsonCache(HashMap<String, JsonNode> jsonCache) {
+        this.jsonCache.clear();
+        this.jsonCache.putAll(jsonCache);
+    }
 
     // Setter
-    public void clearCache() {
-        jsonCache.clear();
-    }
-
-    public void clearCache(String json) {
-        jsonCache.remove(json);
-    }
-
-    public void addJson(String resource, JsonNode json) {
-        jsonCache.put(resource, json);
-    }
-
-    public void switchMode() {
-        isAbsolute = !isAbsolute;
+    public void setURL(String url) {
+        this.url = url;
     }
 
     public void setAbsolute(boolean isAbsolute) {
         this.isAbsolute = isAbsolute;
     }
 
-    public void setURL(String url) {
-        this.url = url;
+    public void setJsonCache(HashMap<String, JsonNode>[] jsonCaches) {
+        this.jsonCache.clear();
+        for (HashMap<String, JsonNode> jsonCache : jsonCaches) this.jsonCache.putAll(jsonCache);
     }
 
-    // Getter
-    public HashMap<String, JsonNode> getJsonCache() {
-        return jsonCache;
+    // Remove
+    public void remove(String path) {
+        jsonCache.remove(path);
     }
 
-    public String getURL() {
-        return url;
+    public void remove(String[] json) {
+        for (String path : json) jsonCache.remove(path);
     }
 
-    public JsonNode getJson(String json) {
-        return jsonCache.get(json);
+    public void remove(JsonNode jsonNode) {
+        jsonCache.remove(jsonNode.getPath());
     }
 
-    public boolean isAbsolute() {
-        return isAbsolute;
+    public void remove(JsonNode[] jsonNodes) {
+        for (JsonNode jsonNode : jsonNodes) jsonCache.remove(jsonNode.getPath());
+    }
+
+    // Add
+    public void add(String path) {
+        if (isAbsolute) jsonCache.put(path, new JsonNode(path, true));
+        else jsonCache.put(path, new JsonNode(path));
+    }
+
+    public void add(String[] json) {
+        for (String path : json) {
+            if (isAbsolute) jsonCache.put(path, new JsonNode(path, true));
+            else jsonCache.put(path, new JsonNode(path));
+        }
+    }
+
+    public void add(JsonNode jsonNode) {
+        jsonCache.put(jsonNode.getPath(), jsonNode);
+    }
+
+    public void add(JsonNode[] jsonNodes) {
+        for (JsonNode jsonNode : jsonNodes) jsonCache.put(jsonNode.getPath(), jsonNode);
+    }
+
+    public void add(HashMap<String, JsonNode> jsonCache) {
+        this.jsonCache.putAll(jsonCache);
+    }
+
+    public void add(HashMap<String, JsonNode>[] jsonCaches) {
+        for (HashMap<String, JsonNode> jsonCache : jsonCaches) this.jsonCache.putAll(jsonCache);
+    }
+
+    // Replace
+    public void replace(String path, JsonNode jsonNode) {
+        jsonCache.replace(path, jsonNode);
+    }
+
+    public void replace(String path, JsonNode[] jsonNodes) {
+        for (JsonNode jsonNode : jsonNodes) jsonCache.replace(path, jsonNode);
+    }
+
+    // Clear
+    public void clear() {
+        jsonCache.clear();
     }
 }

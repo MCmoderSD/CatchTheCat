@@ -1,12 +1,11 @@
 package de.MCmoderSD.main;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import de.MCmoderSD.utilities.Calculate;
 import de.MCmoderSD.utilities.database.MySQL;
 import de.MCmoderSD.utilities.image.ImageReader;
 import de.MCmoderSD.utilities.image.ImageStreamer;
-import de.MCmoderSD.utilities.json.JsonReader;
-import de.MCmoderSD.utilities.json.JsonStreamer;
+import de.MCmoderSD.utilities.json.JsonNode;
+import de.MCmoderSD.utilities.json.JsonUtility;
 
 import javax.swing.ImageIcon;
 import java.awt.Color;
@@ -70,8 +69,8 @@ public class Config {
         else gameID = null;
 
         // Read Config
-        JsonReader jsonReader = new JsonReader();
-        JsonNode database = jsonReader.read("/config/database.json");
+        JsonUtility jsonUtility = new JsonUtility();
+        JsonNode database = jsonUtility.load("/config/database.json");
 
         // Initialize MySQL Connection
         mySQL = new MySQL(
@@ -85,7 +84,7 @@ public class Config {
                 gameID);
 
 
-        JsonNode config = jsonReader.read("/config/default.json");
+        JsonNode config = jsonUtility.load("/config/default.json");
 
         // Constants
         width = config.get("width").asInt();
@@ -123,7 +122,7 @@ public class Config {
         arrows[3] = imageReader.createImageIcon(config.get("arrowRight").asText());
 
 
-        JsonNode languageSet = jsonReader.read("/languages/" + language + ".json");
+        JsonNode languageSet = jsonUtility.load("/languages/" + language + ".json");
 
         // Messages
         title = languageSet.get("title").asText();
@@ -162,8 +161,8 @@ public class Config {
         else gameID = null;
 
         // Read Config
-        JsonStreamer jsonStreamer = new JsonStreamer(url);
-        JsonNode database = jsonStreamer.read("/config/database.json");
+        JsonUtility jsonUtility = new JsonUtility(url);
+        JsonNode database = jsonUtility.load("/config/database.json");
 
         // Initialize MySQL Connection
         mySQL = new MySQL(
@@ -177,7 +176,7 @@ public class Config {
                 gameID);
         
 
-        JsonNode config = jsonStreamer.read("/config/default.json");
+        JsonNode config = jsonUtility.load("/config/default.json");
 
         // Constants
         width = config.get("width").asInt();
@@ -215,7 +214,7 @@ public class Config {
         arrows[3] = imageStreamer.createImageIcon(config.get("arrowRight").asText());
 
 
-        JsonNode languageSet = jsonStreamer.read("/languages/" + language + ".json");
+        JsonNode languageSet = jsonUtility.load("/languages/" + language + ".json");
 
         // Messages
         title = languageSet.get("title").asText();
