@@ -93,38 +93,24 @@ public class JsonNode {
 
     // Decode json
     private void decodeJson(BufferedReader bufferedReader) throws IOException {
-        // Initialize a StringBuilder to store the JSON string
-        StringBuilder jsonString = new StringBuilder();
+        StringBuilder jsonContent = new StringBuilder();
         String line;
 
-        // Read each line from the BufferedReader and append it to the StringBuilder
-        while ((line = bufferedReader.readLine()) != null) jsonString.append(line);
+        // Read the file line by line and append the content to jsonContent
+        while ((line = bufferedReader.readLine()) != null) jsonContent.append(line).append("\n");
 
-        // Convert the accumulated JSON string to a trimmed String
-        String content = jsonString.toString().trim();
+        String json = jsonContent.toString();
 
-        // Remove outer curly braces
-        content = content.substring(1, content.length() - 1);
+        // Remove leading and trailing curly braces
+        json = json.substring(1, json.length() - 2); // Remove only the curly braces, not the last character (a comma)
+        String[] keyValuePairs = json.split(",\n");
 
-        // Split the content into key-value pairs based on comma and optional whitespace
-        String[] keyValuePairs = content.split(",\\s*");
-
-        // Iterate through the key-value pairs
+        // Iterate through the entries, separate keys and values, and add them to the HashMap
         for (String pair : keyValuePairs) {
-            // Split each pair into key and value based on colon ':'
-            String[] keyValue = pair.split(":");
-
-            // Check if the key-value pair has both key and value
-            if (keyValue.length == 2) {
-                // Remove quotes from the key and trim any leading/trailing spaces
-                String key = keyValue[0].trim().replaceAll("\"", "");
-
-                // Remove quotes from the value, trim any leading/trailing spaces and create a JsonValue object (assuming such a class exists)
-                JsonValue value = new JsonValue(keyValue[1].trim().replaceAll("\"", ""));
-
-                // Assuming jsonMap is a Map<String, JsonValue> to store key-value pairs, put the key and value into the map
-                jsonMap.put(key, value);
-            }
+            String[] entry = pair.split(": ");
+            String key = entry[0].trim().replaceAll("\"", ""); // Remove leading/trailing spaces and quotes from the key
+            JsonValue value = new JsonValue(entry[1].trim().replaceAll("\"", "")); // Remove leading/trailing spaces and quotes from the value
+            jsonMap.put(key, value);
         }
     }
 

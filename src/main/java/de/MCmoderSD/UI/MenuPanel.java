@@ -7,9 +7,11 @@ import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.ImageIcon;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.BorderLayout;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 public class MenuPanel extends JPanel {
 
@@ -28,6 +30,7 @@ public class MenuPanel extends JPanel {
     private JButton hostButton;
     private JButton joinButton;
     private JButton restartButton;
+    private boolean roomIDFieldHasFocus;
 
     // Constructor
     public MenuPanel(Frame frame, Config config, Font defaultFont, int menuSize, int padding, int buttonSize, int menuButtonSize) {
@@ -114,6 +117,19 @@ public class MenuPanel extends JPanel {
         restartButton.addActionListener(e -> frame.getController().restartGame());
         restartButton.setVisible(false);
         add(restartButton);
+
+        // RoomID Field Focus Listener
+        roomIDField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                roomIDFieldHasFocus = true;
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                roomIDFieldHasFocus = false;
+            }
+        });
     }
 
     // Hide multiplayer components
@@ -126,6 +142,10 @@ public class MenuPanel extends JPanel {
     // Returns the room ID from the room ID field
     public String getRoomID() {
         return roomIDField.getText().toUpperCase();
+    }
+
+    public boolean hasRoomIDFieldFocus() {
+        return roomIDFieldHasFocus;
     }
 
     // Show restart button

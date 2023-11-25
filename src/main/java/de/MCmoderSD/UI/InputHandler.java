@@ -2,6 +2,9 @@ package de.MCmoderSD.UI;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class InputHandler implements KeyListener {
 
@@ -12,10 +15,15 @@ public class InputHandler implements KeyListener {
     public InputHandler(Frame frame) {
         this.frame = frame;
         frame.addKeyListener(this);
-        frame.requestFocusInWindow();
+
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(this::requestFocusLoop, 0, 100, TimeUnit.MILLISECONDS);
     }
 
     // Methods
+    private void requestFocusLoop() {
+        if (!frame.hasFocus() && !frame.hasRoomIDFieldFocus()) frame.requestFocusInWindow();
+    }
 
     @Override
     public void keyTyped(KeyEvent e) {}

@@ -70,6 +70,10 @@ public class Frame extends JFrame {
         return menuPanel.getRoomID();
     }
 
+    public boolean hasRoomIDFieldFocus() {
+        return menuPanel.hasRoomIDFieldFocus();
+    }
+
     // Setter
     public void hideMultiplayerComponents() {
         menuPanel.hideMultiplayerComponents();

@@ -191,8 +191,12 @@ public class Controller {
 
     // Join Game
     public void joinGame() {
-        frame.setVisible(false); // Hide old frame
-        Main.main(new String[] {config.getLanguage(), frame.getRoomID()}); // Start new game
+        String roomID = frame.getRoomID(); // Get RoomID
+
+        if (roomID.length() == 6) { // Valid roomID
+            frame.setVisible(false); // Hide old frame
+            Main.main(new String[] {config.getLanguage(), roomID}); // Start new game
+        }
     }
 
     // Restart Game
