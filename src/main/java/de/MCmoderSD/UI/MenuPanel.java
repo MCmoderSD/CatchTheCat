@@ -105,7 +105,7 @@ public class MenuPanel extends JPanel {
         joinButton.setBounds((getWidth() - 4 * menuButtonSize) / 2 - padding, getHeight() - 2 * menuButtonSize, 4 * menuButtonSize, menuButtonSize);
         joinButton.setText(config.getJoin());
         joinButton.setFont(defaultFont);
-        joinButton.addActionListener(e -> frame.getController().joinGame());
+        joinButton.addActionListener(e -> frame.getController().joinGame(roomIDField.getText()));
         if (config.getGameID() != null) hideMultiplayerComponents();
         add(joinButton);
 
@@ -139,11 +139,6 @@ public class MenuPanel extends JPanel {
         if (joinButton != null) joinButton.setVisible(false);
     }
 
-    // Returns the room ID from the room ID field
-    public String getRoomID() {
-        return roomIDField.getText().toUpperCase();
-    }
-
     public boolean hasRoomIDFieldFocus() {
         return roomIDFieldHasFocus;
     }
@@ -151,6 +146,6 @@ public class MenuPanel extends JPanel {
     // Show restart button
     public void setRestartButtonVisible(boolean visible) {
         if (config.getGameID() != null) hideMultiplayerComponents();
-        restartButton.setVisible(visible);
+        if (!config.isHost()) restartButton.setVisible(visible);
     }
 }

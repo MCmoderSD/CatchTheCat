@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:mysql://MCmoderSD.de:3306/CatchTheCat</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="root - CatchTheCat" uuid="f4e65979-3ae3-4905-93ff-4f402410defe">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://MCmoderSD.de:3306/CatchTheCat</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

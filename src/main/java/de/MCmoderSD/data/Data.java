@@ -25,7 +25,6 @@ public class Data {
     private Cat cat;
     private boolean isCatOnMove;
     private boolean isNewGame;
-    private boolean updateLoopActive;
 
     // Constructor
     public Data(Controller controller, Config config) {
@@ -38,13 +37,10 @@ public class Data {
         // Update Loop
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(this::updateFromMySQL, 0, 100, TimeUnit.MILLISECONDS);
-        updateLoopActive = true;
     }
 
     // Pull data from MySQL
     private void updateFromMySQL() {
-        if (!updateLoopActive) return; // Check if update loop is active
-
         // Variables
         boolean decodeIsValid;
         String oldEncodedData;
@@ -129,10 +125,6 @@ public class Data {
         isNewGame = newGame;
     }
 
-    public void toggleUpdateLoop(boolean updateLoopActive) {
-        this.updateLoopActive = updateLoopActive;
-    }
-
     // Getter
     public Cat getCat() {
         return cat;
@@ -148,9 +140,5 @@ public class Data {
 
     public boolean isNewGame() {
         return isNewGame;
-    }
-
-    public boolean isUpdateLoopActive() {
-        return updateLoopActive;
     }
 }

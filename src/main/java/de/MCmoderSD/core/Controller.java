@@ -197,21 +197,24 @@ public class Controller {
     }
 
     // Join Game
-    public void joinGame() {
-        String roomID = frame.getRoomID(); // Get RoomID
+    public void joinGame(String input) {
+        StringBuilder roomID = new StringBuilder();
 
-        if (roomID.length() == 6) { // Valid roomID
+        // Filter out all non-digits and non-letters
+        char[] inputChars = input.toCharArray();
+        for (char inputChar : inputChars) if (Character.isDigit(inputChar) || Character.isLetter(inputChar)) roomID.append(inputChar);
+
+        // Valid roomID
+        if (roomID.length() == 6) {
             frame.setVisible(false); // Hide old frame
-            Main.main(new String[] {config.getLanguage(), roomID}); // Start new game
+            Main.main(new String[] {config.getLanguage(), roomID.toString()}); // Start new game
         }
     }
 
     // Restart Game
     public void restartGame() {
-        data.toggleUpdateLoop(!data.isUpdateLoopActive()); // Stop update loop
         data.toggleNewGame(!data.isNewGame()); // Switch
         data.initData(); // Reset data
-        data.toggleUpdateLoop(!data.isUpdateLoopActive()); // Start update loop
         frame.clearLog(); // Clear log
         frame.setRestartButtonVisible(false); // Hide restart button
     }

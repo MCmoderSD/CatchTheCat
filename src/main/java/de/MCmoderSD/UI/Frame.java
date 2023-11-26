@@ -66,10 +66,6 @@ public class Frame extends JFrame {
         return controller;
     }
 
-    public String getRoomID() {
-        return menuPanel.getRoomID();
-    }
-
     public boolean hasRoomIDFieldFocus() {
         return menuPanel.hasRoomIDFieldFocus();
     }
@@ -106,6 +102,4 @@ public class Frame extends JFrame {
     public void setRestartButtonVisible(boolean visible) {
         menuPanel.setRestartButtonVisible(visible);
     }
-
-
 }

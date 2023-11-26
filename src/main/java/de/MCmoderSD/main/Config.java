@@ -28,6 +28,7 @@ public class Config {
     private final int fieldSize;
     private final int tries;
     private final boolean isResizable;
+    private final boolean isHost;
 
     // Assets
     private final ImageIcon[] arrows;
@@ -67,6 +68,9 @@ public class Config {
         // GameID
         if (args.length == 2) gameID = args[1];
         else gameID = null;
+
+        // Is Host
+        isHost = gameID == null;
 
         // Read Config
         JsonUtility jsonUtility = new JsonUtility();
@@ -159,6 +163,9 @@ public class Config {
         // GameID
         if (args.length == 2) gameID = args[1];
         else gameID = null;
+
+        // Is Host
+        isHost = gameID == null;
 
         // Read Config
         JsonUtility jsonUtility = new JsonUtility(url);
@@ -284,6 +291,10 @@ public class Config {
 
     public boolean isResizable() {
         return isResizable;
+    }
+
+    public boolean isHost() {
+        return isHost;
     }
 
     // Getter Assets
