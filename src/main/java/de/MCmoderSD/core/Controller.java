@@ -7,7 +7,9 @@ import de.MCmoderSD.main.Main;
 import de.MCmoderSD.utilities.Calculate;
 import de.MCmoderSD.utilities.database.MySQL;
 
-import java.awt.Point;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 
 public class Controller {
 
@@ -184,6 +186,11 @@ public class Controller {
         // Update encoded data
         data.pushDataToMySQL();
 
+        // Copy To Clipboard
+        StringSelection stringSelection = new StringSelection(gameID);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+
         // Update UI
         frame.appendLog(config.getRoomID() + gameID);
         frame.hideMultiplayerComponents();
@@ -201,8 +208,10 @@ public class Controller {
 
     // Restart Game
     public void restartGame() {
+        data.toggleUpdateLoop(!data.isUpdateLoopActive()); // Stop update loop
         data.toggleNewGame(!data.isNewGame()); // Switch
         data.initData(); // Reset data
+        data.toggleUpdateLoop(!data.isUpdateLoopActive()); // Start update loop
         frame.clearLog(); // Clear log
         frame.setRestartButtonVisible(false); // Hide restart button
     }

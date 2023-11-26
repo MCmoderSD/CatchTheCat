@@ -93,24 +93,25 @@ public class JsonNode {
 
     // Decode json
     private void decodeJson(BufferedReader bufferedReader) throws IOException {
-        StringBuilder jsonContent = new StringBuilder();
+        StringBuilder jsonString = new StringBuilder();
         String line;
 
-        // Read the file line by line and append the content to jsonContent
-        while ((line = bufferedReader.readLine()) != null) jsonContent.append(line).append("\n");
+        while ((line = bufferedReader.readLine()) != null) jsonString.append(line);
 
-        String json = jsonContent.toString();
+        String content = jsonString.toString().trim();
+        content = content.substring(1, content.length() - 1);
+        String[] keyValuePairs = content.split(",\\s*");
 
-        // Remove leading and trailing curly braces
-        json = json.substring(1, json.length() - 2); // Remove only the curly braces, not the last character (a comma)
-        String[] keyValuePairs = json.split(",\n");
-
-        // Iterate through the entries, separate keys and values, and add them to the HashMap
         for (String pair : keyValuePairs) {
-            String[] entry = pair.split(": ");
-            String key = entry[0].trim().replaceAll("\"", ""); // Remove leading/trailing spaces and quotes from the key
-            JsonValue value = new JsonValue(entry[1].trim().replaceAll("\"", "")); // Remove leading/trailing spaces and quotes from the value
-            jsonMap.put(key, value);
+            int colonIndex = pair.indexOf(":");
+            if (colonIndex != -1) {
+                String key = pair.substring(0, colonIndex).trim().replaceAll("\"", "");
+                String rawValue = pair.substring(colonIndex + 1).trim();
+                JsonValue value;
+                if (rawValue.startsWith("\"") && rawValue.endsWith("\"")) value = new JsonValue(rawValue.replaceAll("\"", ""));
+                else value = new JsonValue(rawValue);
+                jsonMap.put(key, value);
+            }
         }
     }
 
