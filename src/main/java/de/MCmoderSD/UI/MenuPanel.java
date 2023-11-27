@@ -146,6 +146,6 @@ public class MenuPanel extends JPanel {
     // Show restart button
     public void setRestartButtonVisible(boolean visible) {
         if (config.getGameID() != null) hideMultiplayerComponents();
-        if (!config.isHost()) restartButton.setVisible(visible);
+        if (!config.isHost() || config.getGameID() == null) restartButton.setVisible(visible);
     }
 }

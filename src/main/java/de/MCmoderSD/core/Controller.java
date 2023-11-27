@@ -217,5 +217,6 @@ public class Controller {
         data.initData(); // Reset data
         frame.clearLog(); // Clear log
         frame.setRestartButtonVisible(false); // Hide restart button
+        if (config.getGameID() == null) updateGameState(); // Update UI
     }
 }
