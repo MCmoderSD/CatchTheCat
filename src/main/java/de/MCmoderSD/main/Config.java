@@ -113,10 +113,10 @@ public class Config {
         // Assets
         catImage = imageReader.createImageIcon(config.get("catImage").asText());
         obstacleImage = imageReader.createImageIcon(config.get("obstacleImage").asText());
-        catColor = Calculate.getColor(config.get("catColor").asText());
-        obstacleColor = Calculate.getColor(config.get("obstacleColor").asText());
-        backgroundColor = Calculate.getColor(config.get("backgroundColor").asText());
-        fontColor = Calculate.getColor(config.get("fontColor").asText());
+        catColor = config.get("catColor").asColor();
+        obstacleColor = config.get("obstacleColor").asColor();
+        backgroundColor = config.get("backgroundColor").asColor();;
+        fontColor = config.get("fontColor").asColor();
 
         // Arrows
         arrows = new ImageIcon[4];
@@ -208,10 +208,10 @@ public class Config {
         // Assets
         catImage = imageStreamer.createImageIcon(config.get("catImage").asText());
         obstacleImage = imageStreamer.createImageIcon(config.get("obstacleImage").asText());
-        catColor = Calculate.getColor(config.get("catColor").asText());
-        obstacleColor = Calculate.getColor(config.get("obstacleColor").asText());
-        backgroundColor = Calculate.getColor(config.get("backgroundColor").asText());
-        fontColor = Calculate.getColor(config.get("fontColor").asText());
+        catColor = config.get("catColor").asColor();
+        obstacleColor = config.get("obstacleColor").asColor();
+        backgroundColor = config.get("backgroundColor").asColor();;
+        fontColor = config.get("fontColor").asColor();
 
         // Arrows
         arrows = new ImageIcon[4];

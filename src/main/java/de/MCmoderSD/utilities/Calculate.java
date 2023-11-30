@@ -151,9 +151,4 @@ public class Calculate {
         InputStream inputStream = Main.class.getResourceAsStream(resourcePath);
         return inputStream != null;
     }
-
-    // String to Color
-    public static Color getColor(String hex) {
-        return new Color(Integer.parseInt(hex.substring(1), 16));
-    }
 }
